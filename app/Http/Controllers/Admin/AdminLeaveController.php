@@ -32,6 +32,52 @@ class AdminLeaveController extends Controller
     }
 
     /**
+     * İzin talebi oluşturur.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function requestLeave(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
+        $user = Auth::user();
+
+        // Eğer kullanıcının pending durumda izin talebi varsa yeni talep gönderemez
+        $pendingRequest = $user->leaveRequests()->where('status', 'pending')->exists();
+        if ($pendingRequest) {
+            return back()->with('error', 'Zaten bekleyen bir izin talebiniz var.');
+        }
+
+        // Tarihleri Carbon nesnelerine dönüştür
+        $startDate = Carbon::parse($request->start_date);
+        $endDate = Carbon::parse($request->end_date);
+
+        // Hafta içi günleri hesapla
+        $leaveDays = $this->calculateWeekdays($startDate, $endDate);
+
+        // Kullanıcının yeterli izin günü olup olmadığını kontrol et
+        $annualLeave = $user->annualLeaves()->where('year', now()->year)->first();
+
+        if ($annualLeave && $annualLeave->total_leaves - $annualLeave->used_leaves >= $leaveDays) {
+            LeaveRequest::create([
+                'user_id' => $user->id,
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+                'status' => 'pending',
+                'days_used' => $leaveDays, // Gün sayısını burada kaydediyoruz.
+            ]);
+
+            return back()->with('success', 'İzin talebi gönderildi.');
+        }
+
+        return back()->with('error', 'Yeterli izin gününüz yok.');
+    }
+
+    /**
      * İzin talebini onaylar veya reddeder.
      *
      * @param \Illuminate\Http\Request $request
@@ -48,8 +94,8 @@ class AdminLeaveController extends Controller
 
             // Kullanıcının yıllık izin güncellemelerini yap
             $annualLeave = AnnualLeave::where('user_id', $leaveRequest->user_id)
-                                    ->where('year', now()->year)
-                                    ->first();
+                                      ->where('year', now()->year)
+                                      ->first();
 
             if ($annualLeave) {
                 // Hafta içi günleri hesapla
@@ -153,7 +199,7 @@ class AdminLeaveController extends Controller
      * @param string $endDate
      * @return int
      */
-    private function calculateWeekdays($startDate, $endDate)
+    public function calculateWeekdays($startDate, $endDate)
     {
         $period = CarbonPeriod::create($startDate, $endDate);
         $weekdays = 0;

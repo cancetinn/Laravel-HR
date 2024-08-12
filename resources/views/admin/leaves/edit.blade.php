@@ -67,7 +67,8 @@
                 <tbody>
                     @foreach($user->leaveRequests as $request)
                     @php
-                        $leaveDays = \Carbon\Carbon::parse($request->start_date)->diffInDays(\Carbon\Carbon::parse($request->end_date)) + 1;
+                        // Hafta içi günleri hesaplamak için calculateWeekdays fonksiyonunu kullanın
+                        $leaveDays = (new \App\Http\Controllers\Admin\AdminLeaveController)->calculateWeekdays($request->start_date, $request->end_date);
                         $statusClass = $request->status === 'approved' ? 'bg-green-500' : ($request->status === 'pending' ? 'bg-yellow-500' : 'bg-red-500');
                         $statusText = $request->status === 'approved' ? 'Onaylandı' : ($request->status === 'pending' ? 'Beklemede' : 'Reddedildi');
                     @endphp
@@ -80,7 +81,7 @@
                                 <span>{{ $statusText }}</span>
                             </div>
                         </td>
-                        <td class="py-4 px-5 text-sm">{{ $leaveDays }}</td>
+                        <td class="py-4 px-5 text-sm">{{ $leaveDays }}</td> <!-- Gün sayısını burada doğru şekilde gösteriyoruz -->
                         <td class="py-4 px-5 text-sm">
                             @if($request->status === 'pending')
                                 <form action="{{ route('admin.leave.request.update', $request->id) }}" method="POST" class="flex space-x-2">
