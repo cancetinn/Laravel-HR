@@ -38,14 +38,11 @@
                 </thead>
                 <tbody>
                     @foreach($leaveRequests as $request)
-                    @php
-                        $leaveDays = \Carbon\Carbon::parse($request->start_date)->diffInDays(\Carbon\Carbon::parse($request->end_date)) + 1;
-                    @endphp
                     <tr class="border-b border-gray-700 hover:bg-accent hover:text-primary transition duration-200">
-                        <td class="py-4 px-5 text-sm">{{ $request->start_date }}</td>
-                        <td class="py-4 px-5 text-sm">{{ $request->end_date }}</td>
+                        <td class="py-4 px-5 text-sm">{{ \Carbon\Carbon::parse($request->start_date)->translatedFormat('d F Y') }}</td>
+                        <td class="py-4 px-5 text-sm">{{ \Carbon\Carbon::parse($request->end_date)->translatedFormat('d F Y') }}</td>
                         <td class="py-4 px-5 text-sm">{{ ucfirst($request->status) }}</td>
-                        <td class="py-4 px-5 text-sm">{{ $leaveDays }}</td>
+                        <td class="py-4 px-5 text-sm">{{ $request->days_used }}</td> <!-- Gün sayısını burada gösteriyoruz -->
                     </tr>
                     @endforeach
                 </tbody>
@@ -55,20 +52,26 @@
         <!-- Yeni İzin Talebi -->
         <h2 class="text-2xl font-semibold mb-4 text-accent">Yeni İzin Talebi</h2>
         <div class="bg-primary p-6 rounded-lg shadow-md">
-            <form action="{{ route('leave.request') }}" method="POST" class="space-y-4">
-                @csrf
-                <div class="flex space-x-4 items-center">
-                    <div class="flex-1">
-                        <label for="start_date" class="block text-white font-semibold">Başlangıç Tarihi</label>
-                        <input type="date" name="start_date" id="start_date" class="w-full p-2 rounded bg-gray-800 text-white" required>
-                    </div>
-                    <div class="flex-1">
-                        <label for="end_date" class="block text-white font-semibold">Bitiş Tarihi</label>
-                        <input type="date" name="end_date" id="end_date" class="w-full p-2 rounded bg-gray-800 text-white" required>
-                    </div>
+            @if($pendingRequest)
+                <div class="bg-yellow-500 text-white p-4 rounded mb-4">
+                    Bekleyen bir izin talebiniz var, yeni bir talep gönderemezsiniz.
                 </div>
-                <button type="submit" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 transition duration-200">İzin Talep Et</button>
-            </form>
+            @else
+                <form action="{{ route('leave.request') }}" method="POST" class="space-y-4">
+                    @csrf
+                    <div class="flex space-x-4 items-center">
+                        <div class="flex-1">
+                            <label for="start_date" class="block text-white font-semibold">Başlangıç Tarihi</label>
+                            <input type="date" name="start_date" id="start_date" class="w-full p-2 rounded bg-gray-800 text-white" required>
+                        </div>
+                        <div class="flex-1">
+                            <label for="end_date" class="block text-white font-semibold">Bitiş Tarihi</label>
+                            <input type="date" name="end_date" id="end_date" class="w-full p-2 rounded bg-gray-800 text-white" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 transition duration-200">İzin Talep Et</button>
+                </form>
+            @endif
         </div>
 
         @if(session('success'))

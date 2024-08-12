@@ -6,6 +6,7 @@ use App\Models\LeaveRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class LeaveController extends Controller
 {
@@ -24,45 +25,71 @@ class LeaveController extends Controller
         $usedLeaves = $annualLeave ? $annualLeave->used_leaves : 0;
         $remainingLeaves = $totalLeaves - $usedLeaves;
 
-        return view('leaves.requests', compact('leaveRequests', 'totalLeaves', 'usedLeaves', 'remainingLeaves'));
+        // Kullanıcının pending durumda izin talebi olup olmadığını kontrol et
+        $pendingRequest = $user->leaveRequests()->where('status', 'pending')->exists();
+
+        return view('leaves.requests', compact('leaveRequests', 'totalLeaves', 'usedLeaves', 'remainingLeaves', 'pendingRequest'));
     }
 
     /**
-     * İzin talebi oluşturur.
+     * İzin talebini onaylar veya reddeder.
      *
      * @param \Illuminate\Http\Request $request
+     * @param int $requestId
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function requestLeave(Request $request)
+    public function updateLeaveRequest(Request $request, $requestId)
     {
-        $request->validate([
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-        ]);
+        $leaveRequest = LeaveRequest::findOrFail($requestId);
 
-        $user = Auth::user();
-        
-        // Tarihleri Carbon nesnelerine dönüştür
-        $startDate = Carbon::parse($request->start_date);
-        $endDate = Carbon::parse($request->end_date);
+        if ($request->input('action') === 'approve') {
+            // İzin talebini onayla
+            $leaveRequest->status = 'approved';
 
-        // İzin günlerini hesapla
-        $leaveDays = $startDate->diffInDays($endDate) + 1;
+            // Kullanıcının yıllık izin güncellemelerini yap
+            $annualLeave = AnnualLeave::where('user_id', $leaveRequest->user_id)
+                                    ->where('year', now()->year)
+                                    ->first();
 
-        // Kullanıcının yeterli izin günü olup olmadığını kontrol et
-        $annualLeave = $user->annualLeaves()->where('year', now()->year)->first();
+            if ($annualLeave) {
+                // Hafta içi günleri hesapla
+                $leaveDays = $this->calculateWeekdays($leaveRequest->start_date, $leaveRequest->end_date);
 
-        if ($annualLeave && $annualLeave->total_leaves - $annualLeave->used_leaves >= $leaveDays) {
-            LeaveRequest::create([
-                'user_id' => $user->id,
-                'start_date' => $request->start_date,
-                'end_date' => $request->end_date,
-                'status' => 'pending',
-            ]);
+                $annualLeave->used_leaves += $leaveDays;
+                $annualLeave->save();
+            }
 
-            return back()->with('success', 'İzin talebi gönderildi.');
+            $leaveRequest->days_used = $leaveDays; // Burada hesaplanan gün sayısını kaydediyoruz.
+            $leaveRequest->save();
+
+        } elseif ($request->input('action') === 'reject') {
+            // İzin talebini reddet
+            $leaveRequest->status = 'rejected';
+            $leaveRequest->save();
         }
 
-        return back()->with('error', 'Yeterli izin gününüz yok.');
+        return back()->with('success', 'İzin talebi güncellendi.');
+    }
+
+    /**
+     * Hafta içi günleri hesaplar.
+     *
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @return int
+     */
+    private function calculateWeekdays(Carbon $startDate, Carbon $endDate)
+    {
+        $period = CarbonPeriod::create($startDate, $endDate);
+        $weekdays = 0;
+
+        foreach ($period as $date) {
+            // Cumartesi (6) ve Pazar (7) günlerini atla
+            if (!$date->isWeekend()) {
+                $weekdays++;
+            }
+        }
+
+        return $weekdays;
     }
 }

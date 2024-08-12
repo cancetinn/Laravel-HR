@@ -8,19 +8,25 @@ use App\Models\LeaveRequest;
 use App\Models\AnnualLeave;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use App\Models\AnnualLeaveLog;
 use Illuminate\Support\Facades\Auth;
 
 class AdminLeaveController extends Controller
 {
     /**
-     * Kullanıcıların yıllık izin durumlarını ve taleplerini listeler.
+     * Kullanıcıların yıllık izin durumlarını listeler.
      *
      * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
-        $users = User::with('annualLeaves', 'leaveRequests')->get();
+        // Tüm kullanıcıları yükleyin
+        $users = User::with(['annualLeaves' => function ($query) {
+            $query->where('year', now()->year);
+        }, 'leaveRequests' => function ($query) {
+            $query->orderBy('end_date', 'desc');
+        }])->get();
 
         return view('admin.leaves.index', compact('users'));
     }
@@ -39,20 +45,22 @@ class AdminLeaveController extends Controller
         if ($request->input('action') === 'approve') {
             // İzin talebini onayla
             $leaveRequest->status = 'approved';
-            $leaveRequest->save();
 
             // Kullanıcının yıllık izin güncellemelerini yap
             $annualLeave = AnnualLeave::where('user_id', $leaveRequest->user_id)
-                                      ->where('year', now()->year)
-                                      ->first();
+                                    ->where('year', now()->year)
+                                    ->first();
 
             if ($annualLeave) {
-                $leaveDays = Carbon::parse($leaveRequest->start_date)
-                                   ->diffInDays(Carbon::parse($leaveRequest->end_date)) + 1;
-                
+                // Hafta içi günleri hesapla
+                $leaveDays = $this->calculateWeekdays($leaveRequest->start_date, $leaveRequest->end_date);
+
                 $annualLeave->used_leaves += $leaveDays;
                 $annualLeave->save();
             }
+
+            $leaveRequest->days_used = $leaveDays; // Gün sayısını burada kaydediyoruz.
+            $leaveRequest->save();
 
         } elseif ($request->input('action') === 'reject') {
             // İzin talebini reddet
@@ -92,6 +100,7 @@ class AdminLeaveController extends Controller
         if ($annualLeave) {
             $previousTotalLeaves = $annualLeave->total_leaves;
             $annualLeave->total_leaves = $request->input('total_leaves');
+            $annualLeave->used_leaves = min($annualLeave->used_leaves, $annualLeave->total_leaves);
             $annualLeave->save();
 
             // Log kaydı ekle
@@ -103,7 +112,7 @@ class AdminLeaveController extends Controller
             ]);
         } else {
             // Yıllık izin kaydı yoksa yeni kayıt oluştur
-            AnnualLeave::create([
+            $annualLeave = AnnualLeave::create([
                 'user_id' => $user->id,
                 'year' => now()->year,
                 'total_leaves' => $request->input('total_leaves'),
@@ -133,6 +142,29 @@ class AdminLeaveController extends Controller
         // Logları al
         $logs = AnnualLeaveLog::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
 
+        // Kullanıcıyı ve diğer bilgileri görünüm dosyasına gönder
         return view('admin.leaves.edit', compact('user', 'totalLeaves', 'usedLeaves', 'remainingLeaves', 'logs'));
+    }
+
+    /**
+     * Hafta içi günleri hesaplar.
+     *
+     * @param string $startDate
+     * @param string $endDate
+     * @return int
+     */
+    private function calculateWeekdays($startDate, $endDate)
+    {
+        $period = CarbonPeriod::create($startDate, $endDate);
+        $weekdays = 0;
+
+        foreach ($period as $date) {
+            // Cumartesi (6) ve Pazar (7) günlerini atla
+            if (!$date->isWeekend()) {
+                $weekdays++;
+            }
+        }
+
+        return $weekdays;
     }
 }

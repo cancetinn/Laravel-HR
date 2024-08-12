@@ -51,7 +51,7 @@ class UserController extends Controller
 
         $user->save();
 
-        return redirect()->route('users.index')->with('success', 'Kullanıcı başarıyla oluşturuldu.');
+        return redirect()->route('admin.users.index')->with('success', 'Kullanıcı başarıyla oluşturuldu.');
     }
 
     public function edit(User $user)
@@ -89,7 +89,7 @@ class UserController extends Controller
 
         $user->save();
 
-        return redirect()->route('users.index')->with('success', 'Kullanıcı başarıyla güncellendi.');
+        return redirect()->route('admin.users.index')->with('success', 'Kullanıcı başarıyla güncellendi.');
     }
 
     public function destroy(User $user)
@@ -100,6 +100,6 @@ class UserController extends Controller
 
         $user->delete();
 
-        return redirect()->route('users.index')->with('success', 'Kullanıcı başarıyla silindi.');
+        return redirect()->route('admin.users.index')->with('success', 'Kullanıcı başarıyla silindi.');
     }
 }

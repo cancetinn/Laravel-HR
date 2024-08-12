@@ -41,15 +41,18 @@
                 </div>
 
                 <div>
-                    <label for="total_leaves" class="block text-white font-semibold">Toplam Yıllık İzin</label>
-                    <input type="number" name="total_leaves" id="total_leaves" value="{{ $totalLeaves }}" min="0" class="w-20 p-2 rounded bg-gray-800 text-white">
+                    <label for="total_leaves" class="block text-white font-semibold">Yıllık İzin Sayısı</label>
+                    <input type="number" name="total_leaves" id="total_leaves" value="{{ $remainingLeaves }}" min="0" class="w-20 p-2 rounded bg-gray-800 text-white">
                     <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition duration-200">Güncelle</button>
                 </div>
             </form>
         </div>
 
         <!-- İzin Geçmişi -->
-        <h2 class="text-2xl font-semibold mb-4 text-accent">İzin Geçmişi</h2>
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-semibold text-accent">İzin Geçmişi</h2>
+            <a href="{{ route('admin.leave.history.export', $user->id) }}" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 transition duration-200">Excel İndir</a>
+        </div>
         <div class="bg-primary p-6 rounded-lg shadow-md mb-8">
             <table class="min-w-full leading-normal bg-primary text-white">
                 <thead>
@@ -58,18 +61,37 @@
                         <th class="py-3 px-5 border-b-2 border-accent text-left text-sm font-semibold text-white">Bitiş Tarihi</th>
                         <th class="py-3 px-5 border-b-2 border-accent text-left text-sm font-semibold text-white">Durum</th>
                         <th class="py-3 px-5 border-b-2 border-accent text-left text-sm font-semibold text-white">Gün Sayısı</th>
+                        <th class="py-3 px-5 border-b-2 border-accent text-left text-sm font-semibold text-white">İşlemler</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($user->leaveRequests as $request)
                     @php
                         $leaveDays = \Carbon\Carbon::parse($request->start_date)->diffInDays(\Carbon\Carbon::parse($request->end_date)) + 1;
+                        $statusClass = $request->status === 'approved' ? 'bg-green-500' : ($request->status === 'pending' ? 'bg-yellow-500' : 'bg-red-500');
+                        $statusText = $request->status === 'approved' ? 'Onaylandı' : ($request->status === 'pending' ? 'Beklemede' : 'Reddedildi');
                     @endphp
                     <tr class="border-b border-gray-700">
-                        <td class="py-4 px-5 text-sm">{{ $request->start_date }}</td>
-                        <td class="py-4 px-5 text-sm">{{ $request->end_date }}</td>
-                        <td class="py-4 px-5 text-sm">{{ $request->status }}</td>
+                        <td class="py-4 px-5 text-sm">{{ \Carbon\Carbon::parse($request->start_date)->translatedFormat('d F Y') }}</td>
+                        <td class="py-4 px-5 text-sm">{{ \Carbon\Carbon::parse($request->end_date)->translatedFormat('d F Y') }}</td>
+                        <td class="py-4 px-5 text-sm">
+                            <div class="flex items-center">
+                                <span class="rounded-full w-4 h-4 mr-2 border-2 border-white {{ $statusClass }}"></span>
+                                <span>{{ $statusText }}</span>
+                            </div>
+                        </td>
                         <td class="py-4 px-5 text-sm">{{ $leaveDays }}</td>
+                        <td class="py-4 px-5 text-sm">
+                            @if($request->status === 'pending')
+                                <form action="{{ route('admin.leave.request.update', $request->id) }}" method="POST" class="flex space-x-2">
+                                    @csrf
+                                    <button type="submit" name="action" value="approve" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition duration-200">Onayla</button>
+                                    <button type="submit" name="action" value="reject" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition duration-200">Reddet</button>
+                                </form>
+                            @else
+                                <span class="text-gray-500">İşlem Yapıldı</span>
+                            @endif
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -84,7 +106,7 @@
             @else
                 <ul class="list-disc pl-5">
                     @foreach($logs as $log)
-                        <li class="text-white">{{ $log->updated_by }} tarafından {{ $log->previous_total_leaves }} izinden {{ $log->new_total_leaves }} izne güncellendi. ({{ $log->created_at->format('d.m.Y H:i') }})</li>
+                        <li class="text-white">{{ $log->updated_by }} tarafından {{ $log->previous_total_leaves }} gün izinden {{ $log->new_total_leaves }} gün izne güncellendi. ({{ $log->created_at->translatedFormat('d F Y H:i') }})</li>
                     @endforeach
                 </ul>
             @endif

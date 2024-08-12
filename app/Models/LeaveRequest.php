@@ -15,6 +15,7 @@ class LeaveRequest extends Model
         'start_date',
         'end_date',
         'status',
+        'days_used', // Bu alanı eklediğinizden emin olun.
     ];
 
     /**

@@ -4,6 +4,10 @@ use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\Admin\AdminLeaveController;
+use App\Exports\UsersLeaveExport;
+use App\Exports\UserLeaveHistoryExport;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Models\User;
 
 // Ana sayfa rotası
 Route::get('/', function () {
@@ -30,6 +34,17 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/leave/history/{userId}', [AdminLeaveController::class, 'showUserLeaveHistory'])->name('leave.history');
     Route::get('/leaves/{user}/edit', [AdminLeaveController::class, 'edit'])->name('leaves.edit');
 
+    // Excel indirme rotası
+    Route::get('/leaves/export', function () {
+        return Excel::download(new UsersLeaveExport, 'yillik_izinler.xlsx');
+    })->name('leaves.export');
+
+    // Kullanıcının izin geçmişini Excel olarak indir
+    Route::get('/leaves/{user}/history/export', function ($user) {
+        $user = User::findOrFail($user);
+        $fileName = 'izin_gecmisi_' . str_replace(' ', '_', $user->first_name . '_' . $user->last_name) . '.xlsx';
+        return Excel::download(new UserLeaveHistoryExport($user), $fileName);
+    })->name('leave.history.export');
 });
 
 // Kullanıcı izin yönetimi rotaları
@@ -40,3 +55,4 @@ Route::middleware(['auth'])->group(function () {
 
 // Authentication rotalarını dahil et
 require __DIR__.'/auth.php';
+
