@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->year('year');
-            $table->integer('total_leaves')->default(0);
-            $table->integer('used_leaves')->default(0);
+            $table->unsignedInteger('total_leaves')->default(0);
+            $table->unsignedInteger('used_leaves')->default(0);
             $table->timestamps();
         });
     }

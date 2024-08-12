@@ -121,4 +121,29 @@ class LeaveController extends Controller
 
         return $weekdays;
     }
+
+    public function cancelLeaveRequest($requestId)
+    {
+        $leaveRequest = LeaveRequest::findOrFail($requestId);
+
+        if ($leaveRequest->status === 'approved' || $leaveRequest->status === 'pending') {
+            $annualLeave = AnnualLeave::where('user_id', $leaveRequest->user_id)
+                                    ->where('year', now()->year)
+                                    ->first();
+
+            if ($annualLeave) {
+                // Kullanılan izin günlerini geri yükle
+                $annualLeave->used_leaves = max(0, $annualLeave->used_leaves - $leaveRequest->days_used);
+                $annualLeave->save();
+            }
+
+            // İzin talebinin durumunu iptal olarak güncelle
+            $leaveRequest->status = 'canceled';
+            $leaveRequest->save();
+
+            return back()->with('success', 'İzin talebi iptal edildi ve izin günleri geri yüklendi.');
+        }
+
+        return back()->with('error', 'Bu izin talebi zaten iptal edilmiş veya reddedilmiş.');
+    }
 }

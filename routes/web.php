@@ -48,10 +48,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 // Kullanıcı izin yönetimi rotaları
+// Kullanıcı izin yönetimi rotaları
 Route::middleware(['auth'])->group(function () {
     Route::get('/leave/requests', [LeaveController::class, 'showLeaveRequests'])->name('leave.requests');
     Route::post('/leave/request', [LeaveController::class, 'requestLeave'])->name('leave.request');
+    Route::put('/leave/cancel/{id}', [LeaveController::class, 'cancelLeaveRequest'])->name('leave.cancel');
 });
+
 
 // Authentication rotalarını dahil et
 require __DIR__.'/auth.php';

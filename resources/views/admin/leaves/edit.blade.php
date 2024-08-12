@@ -67,7 +67,7 @@
                     @php
                         $leaveDays = (new \App\Http\Controllers\Admin\AdminLeaveController)->calculateWeekdays($request->start_date, $request->end_date);
                         $statusClass = $request->status === 'approved' ? 'bg-green-500' : ($request->status === 'pending' ? 'bg-yellow-500' : 'bg-red-500');
-                        $statusText = $request->status === 'approved' ? 'Onaylandı' : ($request->status === 'pending' ? 'Beklemede' : 'Reddedildi');
+$statusText = $request->status === 'approved' ? 'Onaylandı' : ($request->status === 'pending' ? 'Beklemede' : ($request->status === 'canceled' ? 'İptal Etti' : 'Reddedildi'));
                     @endphp
                     <tr class="border-b border-gray-700">
                         <td class="py-4 px-5 text-sm">{{ \Carbon\Carbon::parse($request->start_date)->translatedFormat('d F Y') }}</td>
