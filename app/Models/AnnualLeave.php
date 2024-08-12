@@ -18,8 +18,6 @@ class AnnualLeave extends Model
     ];
 
     /**
-     * Yıllık izin kaydının kullanıcıyla ilişkisini tanımlar.
-     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()

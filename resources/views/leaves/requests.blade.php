@@ -5,7 +5,6 @@
     <div class="py-8">
         <h1 class="text-3xl font-bold mb-6 text-accent">Yıllık İzinlerim</h1>
 
-        <!-- Mevcut İzin Durumu -->
         <div class="bg-primary p-6 rounded-lg shadow-md mb-8">
             <h2 class="text-2xl font-semibold mb-4 text-accent">Mevcut İzin Durumu</h2>
             <div class="flex space-x-4">
@@ -42,14 +41,13 @@
                         <td class="py-4 px-5 text-sm">{{ \Carbon\Carbon::parse($request->start_date)->translatedFormat('d F Y') }}</td>
                         <td class="py-4 px-5 text-sm">{{ \Carbon\Carbon::parse($request->end_date)->translatedFormat('d F Y') }}</td>
                         <td class="py-4 px-5 text-sm">{{ ucfirst($request->status) }}</td>
-                        <td class="py-4 px-5 text-sm">{{ $request->days_used }}</td> <!-- Gün sayısını burada gösteriyoruz -->
+                        <td class="py-4 px-5 text-sm">{{ $request->days_used }}</td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
 
-        <!-- Yeni İzin Talebi -->
         <h2 class="text-2xl font-semibold mb-4 text-accent">Yeni İzin Talebi</h2>
         <div class="bg-primary p-6 rounded-lg shadow-md">
             @if($pendingRequest)

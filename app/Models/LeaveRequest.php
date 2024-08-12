@@ -15,12 +15,10 @@ class LeaveRequest extends Model
         'start_date',
         'end_date',
         'status',
-        'days_used', // Bu alanı eklediğinizden emin olun.
+        'days_used',
     ];
 
     /**
-     * İzin talebinin kullanıcıyla ilişkisini tanımlar.
-     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()

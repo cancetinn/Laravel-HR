@@ -31,11 +31,9 @@
                 <a href="{{ route('admin.leaves') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-accent hover:text-primary">
                     Yıllık İzinler
                 </a>
-                <!-- Diğer menü öğeleri -->
             </nav>
         </aside>
 
-        <!-- Content Area -->
         <div class="flex-1 bg-primary">
             <header class="bg-primary shadow-lg">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">

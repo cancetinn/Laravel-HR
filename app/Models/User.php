@@ -35,8 +35,6 @@ class User extends Authenticatable
     ];
 
     /**
-     * Kullanıcının admin olup olmadığını kontrol eder.
-     *
      * @return bool
      */
     public function isAdmin()
@@ -45,8 +43,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Profil resmi URL'sini alır.
-     *
      * @return string
      */
     public function getProfileImageUrlAttribute()
@@ -58,8 +54,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Kullanıcının rolleriyle ilişkisini tanımlar.
-     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function roles()
@@ -68,8 +62,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Kullanıcının belirli bir role sahip olup olmadığını kontrol eder.
-     *
      * @param string $role
      * @return bool
      */
@@ -79,8 +71,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Kullanıcının sahip olduğu tüm izinleri alır.
-     *
      * @return \Illuminate\Support\Collection
      */
     public function permissions()
@@ -89,8 +79,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Kullanıcının belirli bir izne sahip olup olmadığını kontrol eder.
-     *
      * @param string $permission
      * @return bool
      */
@@ -100,8 +88,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Kullanıcının izin talepleriyle ilişkisini tanımlar.
-     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function leaveRequests()
@@ -110,8 +96,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Kullanıcının yıllık izinleriyle ilişkisini tanımlar.
-     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function annualLeaves()

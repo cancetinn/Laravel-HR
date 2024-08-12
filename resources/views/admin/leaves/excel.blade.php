@@ -16,7 +16,6 @@
             $usedLeaves = $annualLeave ? $annualLeave->used_leaves : 0;
             $remainingLeaves = $totalLeaves - $usedLeaves;
 
-            // Son ve onaylanmış izin talebini al
             $lastApprovedLeave = $user->leaveRequests->first();
         @endphp
         <tr>

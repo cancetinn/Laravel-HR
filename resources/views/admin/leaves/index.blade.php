@@ -32,7 +32,6 @@
                             $usedLeaves = $annualLeave ? $annualLeave->used_leaves : 0;
                             $remainingLeaves = $totalLeaves - $usedLeaves;
 
-                            // Son ve onaylanmış izin talebini al
                             $lastApprovedLeave = $user->leaveRequests()->where('status', 'approved')->orderBy('end_date', 'desc')->first();
                         @endphp
                         <tr class="border-b border-gray-700 hover:bg-accent hover:text-primary transition duration-200">
@@ -70,7 +69,6 @@
 </div>
 
 <script>
-    // Arama Kutusu
     document.getElementById('search').addEventListener('keyup', function () {
         const searchValue = this.value.toLowerCase();
         const tableRows = document.querySelectorAll('#users-table tbody tr');
@@ -85,7 +83,6 @@
         });
     });
 
-    // Tablo Sıralama
     function sortTable(columnIndex) {
         const table = document.getElementById('users-table');
         const rows = Array.from(table.rows).slice(1);

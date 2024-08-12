@@ -5,7 +5,6 @@
     <div class="py-8">
         <h1 class="text-3xl font-bold mb-6 text-accent">{{ $user->first_name }} {{ $user->last_name }} - Detaylar</h1>
 
-        <!-- Kullanıcı Bilgileri ve Güncelleme Formu -->
         <div class="bg-primary p-6 rounded-lg shadow-md mb-8">
             <form action="{{ route('admin.annual.leave.update', $user->id) }}" method="POST" class="space-y-4">
                 @csrf
@@ -48,7 +47,6 @@
             </form>
         </div>
 
-        <!-- İzin Geçmişi -->
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-semibold text-accent">İzin Geçmişi</h2>
             <a href="{{ route('admin.leave.history.export', $user->id) }}" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 transition duration-200">Excel İndir</a>
@@ -67,7 +65,6 @@
                 <tbody>
                     @foreach($user->leaveRequests as $request)
                     @php
-                        // Hafta içi günleri hesaplamak için calculateWeekdays fonksiyonunu kullanın
                         $leaveDays = (new \App\Http\Controllers\Admin\AdminLeaveController)->calculateWeekdays($request->start_date, $request->end_date);
                         $statusClass = $request->status === 'approved' ? 'bg-green-500' : ($request->status === 'pending' ? 'bg-yellow-500' : 'bg-red-500');
                         $statusText = $request->status === 'approved' ? 'Onaylandı' : ($request->status === 'pending' ? 'Beklemede' : 'Reddedildi');
@@ -81,7 +78,7 @@
                                 <span>{{ $statusText }}</span>
                             </div>
                         </td>
-                        <td class="py-4 px-5 text-sm">{{ $leaveDays }}</td> <!-- Gün sayısını burada doğru şekilde gösteriyoruz -->
+                        <td class="py-4 px-5 text-sm">{{ $leaveDays }}</td>
                         <td class="py-4 px-5 text-sm">
                             @if($request->status === 'pending')
                                 <form action="{{ route('admin.leave.request.update', $request->id) }}" method="POST" class="flex space-x-2">
@@ -99,7 +96,6 @@
             </table>
         </div>
 
-        <!-- Güncelleme Logları -->
         <h2 class="text-2xl font-semibold mb-4 text-accent">Güncelleme Logları</h2>
         <div class="bg-primary p-6 rounded-lg shadow-md">
             @if($logs->isEmpty())
