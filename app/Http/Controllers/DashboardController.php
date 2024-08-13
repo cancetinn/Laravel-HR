@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -33,6 +34,13 @@ class DashboardController extends Controller
         $activeAnnualLeaves = $user->leaveRequests()->where('status', 'approved')->get();
     
         return view('dashboard', compact('activeShortLeaves', 'activeAnnualLeaves'));
+    }
+
+    public function getSessionData()
+    {
+        $sessions = DB::table('sessions')->get();
+
+        return response()->json($sessions);
     }
 }
 
