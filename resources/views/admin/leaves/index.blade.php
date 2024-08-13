@@ -4,7 +4,7 @@
 <div class="container mx-auto px-4 sm:px-8">
     <div class="py-8">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-accent">Kullanıcıların Yıllık İzin Durumları</h1>
+            <h1 class="text-3xl font-bold text-white">Kullanıcıların Yıllık İzin Durumları</h1>
             <div class="flex items-center space-x-4">
                 <input type="text" id="search" placeholder="İsim veya soyisim ara..." class="p-2 rounded bg-gray-800 text-white">
                 <a href="{{ route('admin.leaves.export') }}" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 transition duration-200">Excel İndir</a>

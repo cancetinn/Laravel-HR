@@ -106,4 +106,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Document::class);
     }
+    public function shortLeaves()
+    {
+        return $this->hasMany(ShortLeave::class);
+    }
 }

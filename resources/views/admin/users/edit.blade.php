@@ -3,7 +3,7 @@
 @section('content')
     <div class="container mx-auto px-4 sm:px-8">
         <div class="py-8">
-            <h1 class="text-3xl font-bold mb-6 text-accent">Kullanıcıyı Düzenle</h1>
+            <h1 class="text-3xl font-bold mb-6 text-white">Kullanıcıyı Düzenle</h1>
             <div class="bg-primary shadow-md rounded-lg p-6">
                 <form action="{{ route('admin.users.update', $user) }}" method="POST" enctype="multipart/form-data">
                     @csrf
@@ -46,14 +46,14 @@
                         </div>
                     </div>
                     <div class="mt-6">
-                        <button type="submit" class="bg-accent text-primary p-2 rounded hover:bg-primary hover:text-accent transition duration-200">Güncelle</button>
+                        <button type="submit" class="bg-accent text-primary p-2 rounded hover:bg-primary hover:text-white transition duration-200">Güncelle</button>
                     </div>
                 </form>
             </div>
 
             <!-- Belge Yükleme Formu -->
             <div class="bg-primary shadow-md rounded-lg p-6 mt-8">
-                <h2 class="text-2xl font-bold mb-4 text-accent">Belge Yükle</h2>
+                <h2 class="text-2xl font-bold mb-4 text-white">Belge Yükle</h2>
                 <form action="{{ route('admin.upload.document', $user->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="grid grid-cols-1 gap-6">
@@ -78,7 +78,7 @@
 
             <!-- Kullanıcı Belgeleri Listesi -->
             <div class="bg-primary shadow-md rounded-lg p-6 mt-8">
-                <h2 class="text-2xl font-bold mb-4 text-accent">Kullanıcı Belgeleri</h2>
+                <h2 class="text-2xl font-bold mb-4 text-white">Kullanıcı Belgeleri</h2>
                 <table class="min-w-full bg-primary text-white">
                     <thead>
                         <tr>

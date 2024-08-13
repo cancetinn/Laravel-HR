@@ -6,16 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 
-class LeaveRequest extends Model
+class ShortLeave extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'start_date',
-        'end_date',
+        'date',
+        'start_time',
+        'end_time',
+        'reason',
+        'duration',
         'status',
-        'days_used',
     ];
 
     /**
@@ -28,18 +30,19 @@ class LeaveRequest extends Model
 
     public function isActive()
     {
-        $currentDate = now()->toDateString();
-        return $currentDate >= $this->start_date && $currentDate <= $this->end_date;
+        $currentDateTime = now();
+        return $currentDateTime->between($this->start_time, $this->end_time);
     }
 
     public function isExpired()
     {
-        return now()->toDateString() > $this->end_date;
+        return now()->gt($this->end_time);
     }
 
     public function scopeActive($query)
     {
-        return $query->where('start_date', '<=', now()->toDateString())
-                    ->where('end_date', '>=', now()->toDateString());
+        return $query->where('date', now()->toDateString())
+                    ->where('end_time', '>', now()->toTimeString());
     }
+
 }

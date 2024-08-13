@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('leave_requests', function (Blueprint $table) {
-            $table->integer('days_used')->after('status')->nullable(); // days_used alanını ekliyoruz.
+            $table->integer('days_used')->after('status')->nullable();
         });
     }
 

@@ -2,10 +2,13 @@
 
 use App\Http\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Http\Controllers\UserDocumentController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\ShortLeaveController;
 use App\Http\Controllers\Admin\AdminLeaveController;
+use App\Http\Controllers\Admin\AdminShortLeaveController;
 use App\Exports\UsersLeaveExport;
 use App\Exports\UserLeaveHistoryExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -17,9 +20,7 @@ Route::get('/', function () {
 });
 
 // Dashboard rotası, sadece doğrulanmış kullanıcılar erişebilir
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'dashboard'])->middleware(['auth'])->name('dashboard');
 
 // Admin rotaları, sadece 'role' alanı 1 olan kullanıcılar erişebilir
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -54,6 +55,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('upload-document/{user}', [AdminDocumentController::class, 'uploadDocument'])->name('upload.document');
     Route::get('download-document/{document}', [AdminDocumentController::class, 'downloadDocument'])->name('download.document');
     Route::delete('documents/{document}', [AdminDocumentController::class, 'destroy'])->name('delete.document');
+
+    // Kısa izinlerin yönetimi
+    Route::get('short-leaves', [AdminShortLeaveController::class, 'index'])->name('short_leaves.index');
+    Route::get('short-leaves/{user}', [AdminShortLeaveController::class, 'show'])->name('short_leaves.show');
+    Route::post('short-leaves/{id}', [AdminShortLeaveController::class, 'update'])->name('short_leaves.update');
 });
 
 // Kullanıcı izin yönetimi ve belge rotaları
@@ -65,6 +71,15 @@ Route::middleware(['auth'])->group(function () {
     // Kullanıcı belge görüntüleme ve indirme rotaları
     Route::get('documents', [UserDocumentController::class, 'index'])->name('documents');
     Route::get('download-document/{document}', [UserDocumentController::class, 'downloadDocument'])->name('user.download.document');
+});
+
+// Saatlik ve günlük izinler için rotalar
+Route::middleware(['auth'])->group(function () {
+    Route::get('short-leaves', [ShortLeaveController::class, 'index'])->name('short_leaves.index');
+    Route::get('short-leaves/create', [ShortLeaveController::class, 'create'])->name('short_leaves.create');
+    Route::post('short-leaves', [ShortLeaveController::class, 'store'])->name('short_leaves.store');
+    Route::get('short-leaves/{shortLeave}', [ShortLeaveController::class, 'show'])->name('short_leaves.show');
+    Route::delete('short-leaves/{shortLeave}', [ShortLeaveController::class, 'destroy'])->name('short_leaves.destroy');
 });
 
 // Authentication rotalarını dahil et

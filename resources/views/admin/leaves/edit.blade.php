@@ -3,7 +3,7 @@
 @section('content')
 <div class="container mx-auto px-4 sm:px-8">
     <div class="py-8">
-        <h1 class="text-3xl font-bold mb-6 text-accent">{{ $user->first_name }} {{ $user->last_name }} - Detaylar</h1>
+        <h1 class="text-3xl font-bold mb-6 text-white">{{ $user->first_name }} {{ $user->last_name }} - Detaylar</h1>
 
         <div class="bg-primary p-6 rounded-lg shadow-md mb-8">
             <form action="{{ route('admin.annual.leave.update', $user->id) }}" method="POST" class="space-y-4">
@@ -48,7 +48,7 @@
         </div>
 
         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl font-semibold text-accent">İzin Geçmişi</h2>
+            <h2 class="text-2xl font-semibold text-white">İzin Geçmişi</h2>
             <a href="{{ route('admin.leave.history.export', $user->id) }}" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 transition duration-200">Excel İndir</a>
         </div>
         <div class="bg-primary p-6 rounded-lg shadow-md mb-8">
@@ -96,7 +96,7 @@ $statusText = $request->status === 'approved' ? 'Onaylandı' : ($request->status
             </table>
         </div>
 
-        <h2 class="text-2xl font-semibold mb-4 text-accent">Güncelleme Logları</h2>
+        <h2 class="text-2xl font-semibold mb-4 text-white">Güncelleme Logları</h2>
         <div class="bg-primary p-6 rounded-lg shadow-md">
             @if($logs->isEmpty())
                 <p class="text-white">Henüz bir güncelleme yapılmamış.</p>

@@ -20,7 +20,7 @@
         <!-- Sidebar -->
         <aside class="w-64 bg-primary shadow-lg">
             <div class="p-6">
-                <h1 class="text-2xl font-bold text-accent">Back Office</h1>
+                <h1 class="text-2xl font-bold text-white">Back Office</h1>
             </div>
             <nav class="mt-8">
                 <a href="{{ route('admin.dashboard') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-accent hover:text-primary">

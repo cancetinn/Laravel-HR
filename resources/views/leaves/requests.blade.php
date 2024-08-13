@@ -3,10 +3,10 @@
 @section('content')
 <div class="container mx-auto px-4 sm:px-8">
     <div class="py-8">
-        <h1 class="text-3xl font-bold mb-6 text-accent text-white">Yıllık İzinlerim</h1>
+        <h1 class="text-3xl font-bold mb-6 text-white text-white">Yıllık İzinlerim</h1>
 
         <div class="bg-primary p-6 rounded-lg shadow-md mb-8">
-            <h2 class="text-2xl font-semibold mb-4 text-accent text-white">Mevcut İzin Durumu</h2>
+            <h2 class="text-2xl font-semibold mb-4 text-white text-white">Mevcut İzin Durumu</h2>
             <div class="flex space-x-4">
                 <div class="flex-1 bg-gray-800 p-4 rounded-lg shadow">
                     <h3 class="text-lg font-semibold text-gray-300">Toplam Yıllık İzin</h3>
@@ -24,7 +24,7 @@
         </div>
 
         <!-- İzin Geçmişi -->
-        <h2 class="text-2xl font-semibold mb-4 text-accent text-white">İzin Geçmişi</h2>
+        <h2 class="text-2xl font-semibold mb-4 text-white text-white">İzin Geçmişi</h2>
         <div class="bg-primary p-6 rounded-lg shadow-md mb-8">
             <table class="min-w-full leading-normal bg-gray-900 text-white rounded-lg overflow-hidden">
                 <thead>
@@ -65,7 +65,7 @@
             </table>
         </div>
 
-        <h2 class="text-2xl font-semibold mb-4 text-accent text-white">Yeni İzin Talebi</h2>
+        <h2 class="text-2xl font-semibold mb-4 text-white text-white">Yeni İzin Talebi</h2>
         <div class="bg-primary p-6 rounded-lg shadow-md">
             @if($pendingRequest)
                 <div class="bg-yellow-500 text-white p-4 rounded mb-4">

@@ -3,7 +3,7 @@
 @section('content')
 <div class="container mx-auto px-4 sm:px-8">
     <div class="py-8">
-        <h1 class="text-3xl font-bold text-accent mb-6">Belgelerim</h1>
+        <h1 class="text-3xl font-bold text-white mb-6">Belgelerim</h1>
         <div class="bg-primary shadow-md rounded-lg p-6">
             <table class="min-w-full bg-primary text-white">
                 <thead>

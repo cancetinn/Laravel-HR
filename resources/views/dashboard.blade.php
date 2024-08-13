@@ -1,17 +1,35 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
-                </div>
+@section('content')
+<div class="container mx-auto px-4 sm:px-8">
+    <div class="py-8">
+        <h1 class="text-3xl font-bold mb-6 text-white">Aktif İzinler</h1>
+
+        @if($activeShortLeaves->isNotEmpty() || $activeAnnualLeaves->isNotEmpty())
+            <div class="bg-gray-800 p-6 rounded-lg shadow-md mb-8">
+                <h2 class="text-2xl font-semibold mb-4 text-white">Devam Eden İzinler</h2>
+                <ul class="space-y-4">
+                    @foreach($activeShortLeaves as $leave)
+                    <li class="bg-gray-700 p-4 rounded-md shadow">
+                        <span class="text-xl font-semibold text-blue-300">{{ $leave->user->first_name }} {{ $leave->user->last_name }}</span>
+                        <span class="text-white">- {{ \Carbon\Carbon::parse($leave->date)->format('d F Y') }} {{ \Carbon\Carbon::parse($leave->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($leave->end_time)->format('H:i') }}</span>
+                    </li>
+                    @endforeach
+
+                    @foreach($activeAnnualLeaves as $leave)
+                    <li class="bg-gray-700 p-4 rounded-md shadow">
+                        <span class="text-xl font-semibold text-blue-300">{{ $leave->user->first_name }} {{ $leave->user->last_name }}</span>
+                        <span class="text-white">- {{ \Carbon\Carbon::parse($leave->start_date)->format('d F Y') }} - {{ \Carbon\Carbon::parse($leave->end_date)->format('d F Y') }}</span>
+                    </li>
+                    @endforeach
+                </ul>
             </div>
-        </div>
+        @else
+            <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold mb-4 text-white">Aktif İzin Yok</h2>
+                <p class="text-gray-400">Şu anda devam eden bir izin bulunmamaktadır.</p>
+            </div>
+        @endif
     </div>
-</x-app-layout>
+</div>
+@endsection

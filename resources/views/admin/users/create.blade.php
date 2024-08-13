@@ -3,7 +3,7 @@
 @section('content')
     <div class="container mx-auto px-4 sm:px-8">
         <div class="py-8">
-            <h1 class="text-3xl font-bold mb-6 text-accent">Yeni Kullanıcı Ekle</h1>
+            <h1 class="text-3xl font-bold mb-6 text-white">Yeni Kullanıcı Ekle</h1>
             <div class="bg-primary shadow-md rounded-lg p-6">
                 <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
@@ -49,7 +49,7 @@
                         </div>
                     </div>
                     <div class="mt-6">
-                        <button type="submit" class="bg-accent text-primary p-2 rounded hover:bg-primary hover:text-accent transition duration-200">Kullanıcı Oluştur</button>
+                        <button type="submit" class="bg-accent text-primary p-2 rounded hover:bg-primary hover:text-white transition duration-200">Kullanıcı Oluştur</button>
                     </div>
                 </form>
             </div>

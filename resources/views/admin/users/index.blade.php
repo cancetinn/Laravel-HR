@@ -3,8 +3,8 @@
 @section('content')
     <div class="container mx-auto px-4 sm:px-8">
         <div class="py-8">
-            <h1 class="text-3xl font-bold mb-6 text-accent">Kullanıcılar</h1>
-            <a href="{{ route('admin.users.create') }}" class="mb-4 inline-block bg-accent text-primary p-2 rounded hover:bg-primary hover:text-accent transition duration-200">Yeni Kullanıcı Ekle</a>
+            <h1 class="text-3xl font-bold mb-6 text-white">Kullanıcılar</h1>
+            <a href="{{ route('admin.users.create') }}" class="mb-4 inline-block bg-accent text-primary p-2 rounded hover:bg-primary hover:text-white transition duration-200">Yeni Kullanıcı Ekle</a>
             <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                 <div class="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
                     <table class="min-w-full leading-normal bg-primary text-white">
@@ -37,7 +37,7 @@
                                     @endif
                                 </td>
                                 <td class="py-4 px-5 text-sm flex space-x-2">
-                                    <a href="{{ route('admin.users.edit', $user) }}" class="text-accent hover:underline">Düzenle</a>
+                                    <a href="{{ route('admin.users.edit', $user) }}" class="text-white hover:underline">Düzenle</a>
                                     <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('Bu kullanıcıyı silmek istediğinize emin misiniz?');">
                                         @csrf
                                         @method('DELETE')
