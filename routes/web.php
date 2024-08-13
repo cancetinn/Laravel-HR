@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\DocumentController as AdminDocumentController;
+use App\Http\Controllers\UserDocumentController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeaveController;
@@ -45,17 +47,25 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         $fileName = 'izin_gecmisi_' . str_replace(' ', '_', $user->first_name . '_' . $user->last_name) . '.xlsx';
         return Excel::download(new UserLeaveHistoryExport($user), $fileName);
     })->name('leave.history.export');
+
+    // Admin belge yönetimi
+    Route::get('documents', [AdminDocumentController::class, 'index'])->name('documents');
+    Route::get('upload-document/{user}', [AdminDocumentController::class, 'showUploadForm'])->name('upload.document.form');
+    Route::post('upload-document/{user}', [AdminDocumentController::class, 'uploadDocument'])->name('upload.document');
+    Route::get('download-document/{document}', [AdminDocumentController::class, 'downloadDocument'])->name('download.document');
+    Route::delete('documents/{document}', [AdminDocumentController::class, 'destroy'])->name('delete.document');
 });
 
-// Kullanıcı izin yönetimi rotaları
-// Kullanıcı izin yönetimi rotaları
+// Kullanıcı izin yönetimi ve belge rotaları
 Route::middleware(['auth'])->group(function () {
     Route::get('/leave/requests', [LeaveController::class, 'showLeaveRequests'])->name('leave.requests');
     Route::post('/leave/request', [LeaveController::class, 'requestLeave'])->name('leave.request');
     Route::put('/leave/cancel/{id}', [LeaveController::class, 'cancelLeaveRequest'])->name('leave.cancel');
-});
 
+    // Kullanıcı belge görüntüleme ve indirme rotaları
+    Route::get('documents', [UserDocumentController::class, 'index'])->name('documents');
+    Route::get('download-document/{document}', [UserDocumentController::class, 'downloadDocument'])->name('user.download.document');
+});
 
 // Authentication rotalarını dahil et
 require __DIR__.'/auth.php';
-

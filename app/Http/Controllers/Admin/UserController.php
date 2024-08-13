@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Document; // Document modelini dahil ediyoruz
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -56,7 +57,9 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        return view('admin.users.edit', compact('user'));
+        // Kullanıcının belgelerini alıyoruz
+        $documents = Document::where('user_id', $user->id)->get();
+        return view('admin.users.edit', compact('user', 'documents'));
     }
 
     public function update(Request $request, User $user)
