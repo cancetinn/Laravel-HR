@@ -21,6 +21,10 @@
                             <input type="email" name="email" id="email" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white" required>
                         </div>
                         <div>
+                            <label for="phone" class="block text-sm font-medium text-white">Telefon</label>
+                            <input type="text" name="phone" id="phone" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white">
+                        </div>
+                        <div>
                             <label for="password" class="block text-sm font-medium text-white">Şifre</label>
                             <input type="password" name="password" id="password" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white" required>
                         </div>
@@ -33,6 +37,8 @@
                             <select name="role" id="role" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white">
                                 <option value="0">Kullanıcı</option>
                                 <option value="1">Admin</option>
+                                <option value="2">Grafik Tasarım</option>
+                                <option value="3">İçerik Ekibi</option>
                             </select>
                         </div>
                         <div>
@@ -40,8 +46,16 @@
                             <input type="text" name="title" id="title" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white">
                         </div>
                         <div>
-                            <label for="phone" class="block text-sm font-medium text-white">Telefon</label>
-                            <input type="text" name="phone" id="phone" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white">
+                            <label for="department" class="block text-sm font-medium text-white">Departman</label>
+                            <select name="department" id="department" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white">
+                                <option value="Grafik Tasarım">Grafik Tasarım</option>
+                                <option value="Yazılım">Yazılım</option>
+                                <option value="İçerik">İçerik</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="joining_date" class="block text-sm font-medium text-white">İşe Giriş Tarihi</label>
+                            <input type="date" name="joining_date" id="joining_date" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white">
                         </div>
                         <div class="col-span-1 md:col-span-2">
                             <label for="profile_image" class="block text-sm font-medium text-white">Profil Resmi</label>

@@ -16,12 +16,14 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role', // Rol alanı: 0 (normal kullanıcı), 1 (admin)
+        'role',
         'first_name',
         'last_name',
         'title',
         'phone',
         'profile_image',
+        'department',
+        'joining_date',
     ];
 
     protected $hidden = [

@@ -27,7 +27,21 @@
                             <select name="role" id="role" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white">
                                 <option value="0" {{ $user->role == 0 ? 'selected' : '' }}>Kullanıcı</option>
                                 <option value="1" {{ $user->role == 1 ? 'selected' : '' }}>Admin</option>
+                                <option value="2" {{ $user->role == 2 ? 'selected' : '' }}>Grafik Tasarım</option>
+                                <option value="3" {{ $user->role == 3 ? 'selected' : '' }}>İçerik Ekibi</option>
                             </select>
+                        </div>
+                        <div>
+                            <label for="department" class="block text-sm font-medium text-white">Departman</label>
+                            <select name="department" id="department" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white">
+                                <option value="Grafik Tasarım" {{ $user->department == 'Grafik Tasarım' ? 'selected' : '' }}>Grafik Tasarım</option>
+                                <option value="Yazılım" {{ $user->department == 'Yazılım' ? 'selected' : '' }}>Yazılım</option>
+                                <option value="İçerik" {{ $user->department == 'İçerik' ? 'selected' : '' }}>İçerik</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="joining_date" class="block text-sm font-medium text-white">İşe Giriş Tarihi</label>
+                            <input type="date" name="joining_date" id="joining_date" value="{{ old('joining_date', $user->joining_date) }}" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white">
                         </div>
                         <div>
                             <label for="title" class="block text-sm font-medium text-white">Unvan</label>
@@ -36,6 +50,14 @@
                         <div>
                             <label for="phone" class="block text-sm font-medium text-white">Telefon</label>
                             <input type="text" name="phone" id="phone" value="{{ old('phone', $user->phone) }}" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white">
+                        </div>
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-white">Yeni Şifre</label>
+                            <input type="password" name="password" id="password" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white">
+                        </div>
+                        <div>
+                            <label for="password_confirmation" class="block text-sm font-medium text-white">Yeni Şifreyi Onayla</label>
+                            <input type="password" name="password_confirmation" id="password_confirmation" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white">
                         </div>
                         <div class="col-span-1 md:col-span-2">
                             <label for="profile_image" class="block text-sm font-medium text-white">Profil Resmi</label>
@@ -52,6 +74,7 @@
             </div>
 
             <!-- Belge Yükleme Formu -->
+            <!-- (Bu kısım mevcut kodla aynı kalıyor) -->
             <div class="bg-primary shadow-md rounded-lg p-6 mt-8">
                 <h2 class="text-2xl font-bold mb-4 text-white">Belge Yükle</h2>
                 <form action="{{ route('admin.upload.document', $user->id) }}" method="POST" enctype="multipart/form-data">
@@ -77,6 +100,7 @@
             </div>
 
             <!-- Kullanıcı Belgeleri Listesi -->
+            <!-- (Bu kısım mevcut kodla aynı kalıyor) -->
             <div class="bg-primary shadow-md rounded-lg p-6 mt-8">
                 <h2 class="text-2xl font-bold mb-4 text-white">Kullanıcı Belgeleri</h2>
                 <table class="min-w-full bg-primary text-white">
