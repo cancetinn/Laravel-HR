@@ -1,6 +1,15 @@
 @extends('layouts.admin')
 
 @section('content')
+@if ($errors->any())
+    <div class="bg-red-500 text-white p-2 rounded mb-4">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
     <div class="container mx-auto px-4 sm:px-8">
         <div class="py-8">
             <h1 class="text-3xl font-bold mb-6 text-white">Kullanıcıyı Düzenle</h1>
@@ -31,14 +40,12 @@
                                 <option value="3" {{ $user->role == 3 ? 'selected' : '' }}>İçerik Ekibi</option>
                             </select>
                         </div>
-                        <div>
-                            <label for="department" class="block text-sm font-medium text-white">Departman</label>
-                            <select name="department" id="department" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white">
-                                <option value="Grafik Tasarım" {{ $user->department == 'Grafik Tasarım' ? 'selected' : '' }}>Grafik Tasarım</option>
-                                <option value="Yazılım" {{ $user->department == 'Yazılım' ? 'selected' : '' }}>Yazılım</option>
-                                <option value="İçerik" {{ $user->department == 'İçerik' ? 'selected' : '' }}>İçerik</option>
-                            </select>
-                        </div>
+                        <select name="department" id="department" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white">
+                            <option value="1" {{ $user->department == 1 ? 'selected' : '' }}>Grafik Tasarım</option>
+                            <option value="2" {{ $user->department == 2 ? 'selected' : '' }}>Yazılım</option>
+                            <option value="3" {{ $user->department == 3 ? 'selected' : '' }}>İçerik Ekibi</option>
+                            <option value="4" {{ $user->department == 4 ? 'selected' : '' }}>SEO</option>
+                        </select>
                         <div>
                             <label for="joining_date" class="block text-sm font-medium text-white">İşe Giriş Tarihi</label>
                             <input type="date" name="joining_date" id="joining_date" value="{{ old('joining_date', $user->joining_date) }}" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white">

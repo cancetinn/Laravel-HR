@@ -112,4 +112,16 @@ class User extends Authenticatable
     {
         return $this->hasMany(ShortLeave::class);
     }
+
+    public function getDepartmentNameAttribute()
+    {
+        $departments = [
+            1 => 'Grafik Tasarım',
+            2 => 'Yazılım',
+            3 => 'İçerik Ekibi',
+            4 => 'SEO',
+        ];
+
+        return $departments[$this->department] ?? 'Bilinmiyor';
+    }
 }

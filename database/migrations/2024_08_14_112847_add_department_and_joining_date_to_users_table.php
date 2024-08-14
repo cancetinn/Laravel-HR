@@ -9,7 +9,7 @@ class AddDepartmentAndJoiningDateToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('department')->nullable();
+            $table->integer('department')->default(1)->after('role');
             $table->date('joining_date')->nullable();
         });
     }
