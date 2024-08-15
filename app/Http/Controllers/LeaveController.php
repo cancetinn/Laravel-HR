@@ -108,7 +108,7 @@ class LeaveController extends Controller
      * @param Carbon $endDate
      * @return int
      */
-    private function calculateWeekdays(Carbon $startDate, Carbon $endDate)
+    public function calculateWeekdays(Carbon $startDate, Carbon $endDate)
     {
         $period = CarbonPeriod::create($startDate, $endDate);
         $weekdays = 0;

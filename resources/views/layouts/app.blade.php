@@ -16,6 +16,7 @@
     <title>Arina Digital | HR Management</title>
 
     <meta name="description" content="" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="icon" type="image/x-icon" href="https://arinadigital.com/wp-content/uploads/2023/12/favicon.png" />
 
@@ -30,6 +31,7 @@
     <link rel="stylesheet" href="{{ asset('theme/assets/css/demo.css')}}" />
     <link rel="stylesheet" href="{{ asset('theme/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css')}}" />
     <link rel="stylesheet" href="{{ asset('theme/assets/vendor/libs/apex-charts/apex-charts.css')}}" />
+    <link rel="stylesheet" href="{{ asset('theme/assets/vendor/css/pages/page-auth.css')}}" />
     <script src="{{ asset('theme/assets/vendor/js/helpers.js')}}"></script>
     <script src="{{ asset('theme/assets/js/config.js')}}"></script>
   </head>

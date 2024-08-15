@@ -135,9 +135,14 @@ document.addEventListener('DOMContentLoaded', function() {
     let submitButton = document.getElementById('submitRequestButton');
     let confirmButton = document.getElementById('confirmButton');
     let deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    let checkbox = document.getElementById('defaultCheck1');
 
     submitButton.addEventListener('click', function() {
-        deleteModal.show();
+        if (checkbox.checked) {
+            deleteModal.show();
+        } else {
+            alert('Lütfen izin prosedürünü onaylayın.');
+        }
     });
 
     confirmButton.addEventListener('click', function() {

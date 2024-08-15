@@ -343,7 +343,7 @@
                               <h6 class="fw-normal mb-0">Günlük İzin</h6>
                             </div>
                             <div class="user-progress d-flex align-items-center gap-2">
-                              <span class="fw-normal mb-0">{{ \Carbon\Carbon::parse($leave->start_time)->translatedFormat('j F Y H:i') }} - {{ \Carbon\Carbon::parse($leave->end_time)->translatedFormat('H:i') }}</span>
+                              <span class="fw-normal mb-0">{{ \Carbon\Carbon::parse($leave->start_time)->translatedFormat('j F H:i') }} - {{ \Carbon\Carbon::parse($leave->end_time)->translatedFormat('H:i') }}</span>
                               <span class="badge bg-success">Aktif</span>
                             </div>
                           </div>

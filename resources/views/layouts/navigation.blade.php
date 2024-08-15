@@ -1,3 +1,4 @@
+@if(auth()->check())
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
           <div class="app-brand demo">
             <a href="{{'/dashboard'}}" class="app-brand-link">
@@ -62,34 +63,16 @@
                 <div class="text-truncate" data-i18n="Support">Yardım</div>
               </a>
             </li>
-            @if(auth()->user() && auth()->user()->role === 2 )
-            <li class="menu-item">
-              <a
-                href="{{ route('admin.dashboard') }}"
-                target="_blank"
-                class="menu-link">
-                <i class="menu-icon tf-icons bx bx-cog"></i>
-                <div class="text-truncate" data-i18n="Yönetim Paneli">Yönetim Paneli</div>
-              </a>
-            </li>
-            @endif
+            @if(auth()->user() && in_array(auth()->user()->role, [1, 2, 3]))
+          <li class="menu-item">
+            <a
+              href="{{ route('admin.dashboard') }}"
+              class="menu-link">
+              <i class="menu-icon tf-icons bx bx-cog"></i>
+              <div class="text-truncate" data-i18n="Yönetim Paneli">Yönetim Paneli</div>
+            </a>
+          </li>
+          @endif
           </ul>
         </aside>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+@endif

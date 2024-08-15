@@ -66,6 +66,7 @@
     </nav>
 
 
+
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="heading d-flex justify-content-between">
@@ -74,7 +75,7 @@
                 </div>
                 <div class="buttonArea">
                     <a href="{{ route('short_leaves.create') }}">
-                        <button type="button" class="btn rounded-pill btn-primary"">
+                        <button type="button" class="btn rounded-pill btn-primary">
                             <span class="tf-icons bx bx-plus-medical bx-18px me-2"></span>Talep Oluştur
                         </button>
                     </a>
@@ -94,8 +95,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($shortLeaves as $leave) @php if (\Carbon\Carbon::parse($leave->end_time)->isPast()) { $statusClass = 'bg-label-warning'; $statusText = 'İzin Bitti'; } else { $statusClass = $leave->status === 'approved' ? 'bg-label-success' : ($leave->status
-                            === 'pending' ? 'bg-label-warning' : 'bg-label-danger'); $statusText = $leave->status === 'approved' ? 'Onaylandı' : ($leave->status === 'pending' ? 'Beklemede' : 'Reddedildi'); } @endphp
+                            @foreach($shortLeaves as $leave)
+                            @php
+                                $statusClass = $leave->status === 'approved' ? 'bg-label-success' :
+                                               ($leave->status === 'pending' ? 'bg-label-warning' : 'bg-label-danger');
+                                $statusText = $leave->status === 'approved' ? 'Onaylandı' :
+                                              ($leave->status === 'pending' ? 'Beklemede' : 'Reddedildi');
+                            @endphp
                             <tr class="border-b border-gray-200 hover:bg-gray-100 transition duration-200">
                                 <td class="py-4 px-5 text-sm">{{ \Carbon\Carbon::parse($leave->date)->translatedFormat('d F Y') }}</td>
                                 <td class="py-4 px-5 text-sm">{{ \Carbon\Carbon::parse($leave->start_time)->format('H:i') }}</td>
@@ -109,12 +115,13 @@
                                     </div>
                                 </td>
                                 <td class="py-4 px-5 text-sm">
-                                    @if($statusText !== 'İzin Bitti')
-                                    <button type="button" class="btn rounded-pill btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-url="{{ route('short_leaves.destroy', $leave->id) }}">
-                                        Sil
+                                    @if($leave->status === 'pending')
+                                    <button type="button" class="btn rounded-pill btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelLeaveModal" data-id="{{ $leave->id }}">
+                                        İptal Et
                                     </button>
                                     @else
-                                    <span class="text-gray-500">İşlem Yapılamaz</span> @endif
+                                    <span class="text-gray-500">İşlem Yapılamaz</span>
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
@@ -123,19 +130,24 @@
                 </div>
             </div>
 
-            <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+            <!-- İzin İptal Etme Modali -->
+            <div class="modal fade" id="cancelLeaveModal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">İzni Sil</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <h5 class="modal-title">İzni İptal Et</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
                         </div>
                         <div class="modal-body">
-                            <p>Bu izni silmek istediğinizden emin misiniz?</p>
+                            <p>Bu izni iptal etmek istediğinizden emin misiniz?</p>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hayır</button>
-                            <button type="button" class="btn btn-danger" id="confirmDelete">Evet, Sil</button>
+                            <form id="cancelForm" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger">Evet, İptal Et</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -143,17 +155,18 @@
         </div>
     </div>
 
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                let deleteModal = document.getElementById('deleteModal');
-                let deleteForm = document.getElementById('deleteForm');
-                
-                deleteModal.addEventListener('show.bs.modal', function (event) {
-                    let button = event.relatedTarget;
-                    let url = button.getAttribute('data-url');
-                    deleteForm.setAttribute('action', url);
-                });
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let cancelModal = document.getElementById('cancelLeaveModal');
+            let cancelForm = document.getElementById('cancelForm');
+            
+            cancelModal.addEventListener('show.bs.modal', function(event) {
+                let button = event.relatedTarget;
+                let leaveId = button.getAttribute('data-id');
+                let actionUrl = `/short-leaves/${leaveId}`;
+                cancelForm.setAttribute('action', actionUrl);
             });
-        </script>
-        @endsection
+        });
+    </script>
+@endsection
