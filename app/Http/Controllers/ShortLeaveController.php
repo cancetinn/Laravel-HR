@@ -42,10 +42,10 @@ class ShortLeaveController extends Controller
         return redirect()->route('short_leaves.index')->with('success', 'Kısa izin talebiniz başarıyla oluşturuldu.');
     }
 
-    public function show(ShortLeave $shortLeave)
+/*     public function show(ShortLeave $shortLeave)
     {
         return view('short_leaves.show', compact('shortLeave'));
-    }
+    } */
 
     public function destroy(ShortLeave $shortLeave)
     {

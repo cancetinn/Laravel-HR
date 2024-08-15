@@ -1,86 +1,148 @@
-@extends('layouts.app')
+@extends('layouts.app') @section('content')
+<div class="layout-page">
+    <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
+        <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0 d-xl-none">
+            <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)">
+                <i class="bx bx-menu bx-md"></i>
+            </a>
+        </div>
 
-@section('content')
-<div class="container mx-auto px-4 sm:px-8">
-    <div class="py-8">
-    <div class="flex justify-end items-center mb-4 align-right border-b-2 border-blue-100">
-            <div class="flex items-center space-x-4 mb-3">
-                <div class="flex items-center space-x-3">
-                    <img src="{{ Auth::user()->profile_image_url }}" alt="{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}" class="w-10 h-10 object-cover rounded-full border-2 border-gray-300" />
-                    <p class="text-sm font-bold text-gray-900">Merhaba, {{ Auth::user()->first_name }}</p>
+        <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+            <div class="navbar-nav align-items-center">
+                <div class="nav-item d-flex align-items-center">
+                    <i class="bx bx-search bx-md"></i>
+                    <input type="text" class="form-control border-0 shadow-none ps-1 ps-sm-2" placeholder="Arama" aria-label="Arama" />
                 </div>
-                <button class="relative border-2 border-gray-200 rounded-full p-2.5">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M11.9962 2.51419C7.56192 2.51419 5.63525 6.52943 5.63525 9.18371C5.63525 11.1675 5.92287 10.5837 4.82477 13.0037C3.48382 16.4523 8.8762 17.8618 11.9962 17.8618C15.1152 17.8618 20.5076 16.4523 19.1676 13.0037C18.0695 10.5837 18.3572 11.1675 18.3572 9.18371C18.3572 6.52943 16.4295 2.51419 11.9962 2.51419Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M14.306 20.5122C13.0117 21.9579 10.9927 21.975 9.68604 20.5122" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">3</span>
-                </button>
-                <button class="border-2 border-gray-200 rounded-full p-2.5">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 18L18 18" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M6 6L18 6" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M8 12H16" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
+            </div>
+
+            <ul class="navbar-nav flex-row align-items-center ms-auto">
+
+                <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                    <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
+                        <div class="avatar avatar-online">
+                            <img src="{{ Auth::user()->profile_image_url }}" alt class="w-px-40 h-auto rounded-circle" />
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="avatar avatar-online">
+                                            <img src="{{ Auth::user()->profile_image_url }}" alt class="w-px-40 h-auto rounded-circle" />
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</h6>
+                                        <small class="text-muted">{{ Auth::user()->title }}</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <div class="dropdown-divider my-1"></div>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="bx bx-user bx-md me-3"></i><span>Profilim</span>
+                            </a>
+                        </li>
+                        <li>
+                            <div class="dropdown-divider my-1"></div>
+                        </li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                                this.closest('form').submit();">
+                                    <i class="bx bx-power-off bx-md me-3"></i><span>Çıkış Yap</span>
+                                </a>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="heading mb-4">
+            <div class="titleArea text-center">
+                <h3>Yeni Günlük İzin Talebi Oluştur</h3>
             </div>
         </div>
-        <h1 class="text-3xl font-bold mb-6 text-gray-800">Yeni Kısa İzin Talebi Oluştur</h1>
-
-        <!-- İzin Oluşturma Formu -->
-        <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
-            <form id="requestForm" action="{{ route('short_leaves.store') }}" method="POST">
-                @csrf
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="date" class="block text-sm font-medium text-gray-700">Tarih</label>
-                        <input type="date" name="date" id="date" class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md text-gray-800 focus:ring-blue-500 focus:border-blue-500" required>
-                    </div>
-                    <div>
-                        <label for="start_time" class="block text-sm font-medium text-gray-700">Başlangıç Saati</label>
-                        <input type="time" name="start_time" id="start_time" class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md text-gray-800 focus:ring-blue-500 focus:border-blue-500" required>
-                    </div>
-                    <div>
-                        <label for="end_time" class="block text-sm font-medium text-gray-700">Bitiş Saati</label>
-                        <input type="time" name="end_time" id="end_time" class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md text-gray-800 focus:ring-blue-500 focus:border-blue-500" required>
-                    </div>
-                    <div class="col-span-1 md:col-span-2">
-                        <label for="reason" class="block text-sm font-medium text-gray-700">Mazeret/Açıklama</label>
-                        <textarea name="reason" id="reason" rows="4" class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md text-gray-800 focus:ring-blue-500 focus:border-blue-500" required></textarea>
-                    </div>
+        <div class="col-xl-8 mx-auto">
+            <div class="card mb-6 shadow-sm">
+                <div class="card-body">
+                    <form id="dailyLeaveForm" action="{{ route('short_leaves.store') }}" method="POST">
+                        @csrf
+                        <div class="mb-4">
+                            <label for="html5-date-input" class="form-label">Tarih</label>
+                            <input class="form-control" type="date" name="date" id="html5-date-input" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" required />
+                        </div>
+                        <div class="mb-4">
+                            <label for="start_time" class="form-label">Başlangıç Saati</label>
+                            <input class="form-control" type="time" name="start_time" id="start_time" required />
+                        </div>
+                        <div class="mb-4">
+                            <label for="end_time" class="form-label">Bitiş Saati</label>
+                            <input class="form-control" type="time" name="end_time" id="end_time" required />
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label" for="reason">Mazeret/Açıklama</label>
+                            <textarea id="reason" class="form-control" name="reason" rows="4" required></textarea>
+                        </div>
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" required>
+                            <label class="form-check-label" for="defaultCheck1">
+                                İzin prosedürünü onaylıyorum.
+                            </label>
+                        </div>
+                        <button type="button" class="btn btn-primary w-100" id="submitRequestButton">İzin Talebini Gönder</button>
+                    </form>
                 </div>
-                <div class="mt-6">
-                    <button type="button" id="submitRequestButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">İzin Talebi Gönder</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Modern Popup Modal -->
-<div id="confirmationModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center hidden">
-    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-        <h2 class="text-xl font-semibold mb-4 text-gray-800">Emin misiniz?</h2>
-        <p class="text-gray-700 mb-6">Bu izin talebini göndermek istediğinizden emin misiniz?</p>
-        <div class="flex justify-end space-x-4">
-            <button id="cancelButton" class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 transition duration-200">Hayır</button>
-            <button id="confirmButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">Evet</button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Talebi Gönder?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Bu izin talebini göndermek istediğinize emin misiniz?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hayır</button>
+                        <button type="button" class="btn btn-success" id="confirmButton">Evet</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    document.getElementById('submitRequestButton').addEventListener('click', function(event) {
-        event.preventDefault();
-        document.getElementById('confirmationModal').classList.remove('hidden');
+document.addEventListener('DOMContentLoaded', function() {
+    let submitButton = document.getElementById('submitRequestButton');
+    let confirmButton = document.getElementById('confirmButton');
+    let deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+
+    submitButton.addEventListener('click', function() {
+        deleteModal.show();
     });
 
-    document.getElementById('cancelButton').addEventListener('click', function() {
-        document.getElementById('confirmationModal').classList.add('hidden');
+    confirmButton.addEventListener('click', function() {
+        document.getElementById('dailyLeaveForm').submit();
     });
-
-    document.getElementById('confirmButton').addEventListener('click', function() {
-        document.getElementById('requestForm').submit();
-    });
+});
 </script>
 @endsection

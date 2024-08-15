@@ -78,7 +78,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('short-leaves', [ShortLeaveController::class, 'index'])->name('short_leaves.index');
     Route::get('short-leaves/create', [ShortLeaveController::class, 'create'])->name('short_leaves.create');
     Route::post('short-leaves', [ShortLeaveController::class, 'store'])->name('short_leaves.store');
-    Route::get('short-leaves/{shortLeave}', [ShortLeaveController::class, 'show'])->name('short_leaves.show');
+    /* Route::get('short-leaves/{shortLeave}', [ShortLeaveController::class, 'show'])->name('short_leaves.show'); */
     Route::delete('short-leaves/{shortLeave}', [ShortLeaveController::class, 'destroy'])->name('short_leaves.destroy');
 });
 
