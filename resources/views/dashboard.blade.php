@@ -1,121 +1,398 @@
 @extends('layouts.app')
 
 @section('content')
-<section class="w-full p-4 bg-gray-50 md:p-8 min-h-screen">
-    <div class=" flex justify-end items-center mb-4 align-right border-b-2 border-blue-100">
-        <div class="flex items-center space-x-4 mb-3">
-            <div class="flex items-center space-x-3">
-                <img src="{{ Auth::user()->profile_image_url }}" alt="{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}" class="w-10 h-10 object-cover rounded-full border-2 border-gray-300" />
-                <p class="text-sm font-bold text-gray-900">Merhaba, {{ Auth::user()->first_name }}</p>
+<div class="layout-page">
+          <!-- Navbar -->
+
+          <nav
+            class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+            id="layout-navbar">
+            <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0 d-xl-none">
+              <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)">
+                <i class="bx bx-menu bx-md"></i>
+              </a>
             </div>
-            <button class="relative border-2 border-gray-200 rounded-full p-2.5">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.9962 2.51419C7.56192 2.51419 5.63525 6.52943 5.63525 9.18371C5.63525 11.1675 5.92287 10.5837 4.82477 13.0037C3.48382 16.4523 8.8762 17.8618 11.9962 17.8618C15.1152 17.8618 20.5076 16.4523 19.1676 13.0037C18.0695 10.5837 18.3572 11.1675 18.3572 9.18371C18.3572 6.52943 16.4295 2.51419 11.9962 2.51419Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M14.306 20.5122C13.0117 21.9579 10.9927 21.975 9.68604 20.5122" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">3</span>
-            </button>
-            <button class="border-2 border-gray-200 rounded-full p-2.5">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M6 18L18 18" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M6 6L18 6" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M8 12H16" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
-        </div>
-    </div>
 
-
-    <div>
-    <h2 class="text-base font-bold">Güncel İzin Verilerim</h2>
-            </div>
-    
-    <div class="flex flex-col md:flex-row justify-between mt-4 space-y-3 mb-8 md:space-x-4 md:space-y-0 md:mb-14">
-        <div class="p-5 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl w-full shadow-md">
-            <p class="text-base font-bold text-white">Kalan Yıllık İzin</p>
-            <p class="text-2xl font-semibold text-white">
-                {{ \App\Models\AnnualLeave::where('user_id', auth()->id())->sum('total_leaves') - \App\Models\AnnualLeave::where('user_id', auth()->id())->sum('used_leaves') }}
-            </p>
-        </div>
-        <div class="p-5 bg-gradient-to-r from-green-400 to-teal-400 rounded-xl w-full shadow-md">
-            <p class="text-base font-bold text-white">Kullanılan Yıllık İzin</p>
-            <p class="text-2xl font-semibold text-white">{{ \App\Models\AnnualLeave::where('user_id', auth()->id())->sum('used_leaves') }}</p>
-        </div>
-    </div>
-
-    <div>
-                <h2 class="leading-tight text-base font-bold">Güncel İzinli Kişiler</h2>
-            </div>
-    <div class="container mx-auto  w-full">
-            <div class="-mx-4 sm:-mx-8 px-4 py-4 overflow-x-auto">
-                <div class="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
-                    <table class="min-w-full leading-normal">
-                        <thead>
-                            <tr>
-                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Ad - Soyad</th>
-                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">İzin Türü</th>
-                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Tarih & Saat Aralığı</th>
-                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Durum</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($activeShortLeaves as $leave)
-                            <tr>
-                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 w-10 h-10">
-                                            <img class="w-full h-full rounded-full" src="{{ $leave->user->profile_image_url }}" alt="{{ $leave->user->first_name }} {{ $leave->user->last_name }}" />
-                                        </div>
-                                        <div class="ml-3">
-                                            <p class="text-gray-900 whitespace-no-wrap">{{ $leave->user->first_name }} {{ $leave->user->last_name }}</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                    <p class="text-gray-900 whitespace-no-wrap">Kısa İzin</p>
-                                </td>
-                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                    <p class="text-gray-900 whitespace-no-wrap">{{ \Carbon\Carbon::parse($leave->start_time)->translatedFormat('j F Y H:i') }} - {{ \Carbon\Carbon::parse($leave->end_time)->translatedFormat('H:i') }}</p>
-                                </td>
-                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                    <span class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-                                        <span aria-hidden class="absolute inset-0 bg-green-200 opacity-50 rounded-full"></span>
-                                        <span class="relative">Aktif</span>
-                                    </span>
-                                </td>
-                            </tr>
-                            @endforeach
-
-                            @foreach($activeAnnualLeaves as $leave)
-                            <tr>
-                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 w-10 h-10">
-                                            <img class="w-full h-full rounded-full" src="{{ $leave->user->profile_image_url }}" alt="{{ $leave->user->first_name }} {{ $leave->user->last_name }}" />
-                                        </div>
-                                        <div class="ml-3">
-                                            <p class="text-gray-900 whitespace-no-wrap">{{ $leave->user->first_name }} {{ $leave->user->last_name }}</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                    <p class="text-gray-900 whitespace-no-wrap">Yıllık İzin</p>
-                                </td>
-                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                    <p class="text-gray-900 whitespace-no-wrap">{{ \Carbon\Carbon::parse($leave->start_date)->translatedFormat('d F Y') }} - {{ \Carbon\Carbon::parse($leave->end_date)->translatedFormat('d F Y') }}</p>
-                                </td>
-                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                    <span class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-                                        <span aria-hidden class="absolute inset-0 bg-green-200 opacity-50 rounded-full"></span>
-                                        <span class="relative">Aktif</span>
-                                    </span>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+              <div class="navbar-nav align-items-center">
+                <div class="nav-item d-flex align-items-center">
+                  <i class="bx bx-search bx-md"></i>
+                  <input
+                    type="text"
+                    class="form-control border-0 shadow-none ps-1 ps-sm-2"
+                    placeholder="Arama"
+                    aria-label="Arama" />
                 </div>
+              </div>
+
+              <ul class="navbar-nav flex-row align-items-center ms-auto">
+                
+                <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                  <a
+                    class="nav-link dropdown-toggle hide-arrow p-0"
+                    href="javascript:void(0);"
+                    data-bs-toggle="dropdown">
+                    <div class="avatar avatar-online">
+                      <img src="{{ Auth::user()->profile_image_url }}" alt class="w-px-40 h-auto rounded-circle" />
+                    </div>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="#">
+                        <div class="d-flex">
+                          <div class="flex-shrink-0 me-3">
+                            <div class="avatar avatar-online">
+                              <img src="{{ Auth::user()->profile_image_url }}" alt class="w-px-40 h-auto rounded-circle" />
+                            </div>
+                          </div>
+                          <div class="flex-grow-1">
+                            <h6 class="mb-0">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</h6>
+                            <small class="text-muted">{{ Auth::user()->title }}</small>
+                          </div>
+                        </div>
+                      </a>
+                    </li>
+                    <li>
+                      <div class="dropdown-divider my-1"></div>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="#">
+                        <i class="bx bx-user bx-md me-3"></i><span>Profilim</span>
+                      </a>
+                    </li>
+                    <li>
+                      <div class="dropdown-divider my-1"></div>
+                    </li>
+                    <li>
+                    <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                                this.closest('form').submit();">
+                                <i class="bx bx-power-off bx-md me-3"></i><span>Çıkış Yap</span>
+                            </a>
+                        </form>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
             </div>
-    </div>
-</section>
+          </nav>
+
+          <div class="content-wrapper">
+
+            <div class="container-xxl flex-grow-1 container-p-y">
+              <div class="row">
+                <div class="col-xxl-8 mb-6 order-0">
+                  <div class="card">
+                    <div class="d-flex align-items-start row">
+                      <div class="col-sm-7">
+                        <div class="card-body">
+                          <h5 class="card-title text-primary mb-6">Günaydın, {{ Auth::user()->first_name }}!</h5>
+                          <h4 class="mb-6">
+                          <i class='bx bx-sun'></i> 24°C <small>/ İstanbul/Pendik</small>
+                          </>
+                        </div>
+                      </div>
+                      <div class="col-sm-5 text-center text-sm-left">
+                        <div class="card-body pb-0 px-0 px-md-6">
+                          <img
+                            src="{{ Auth::user()->profile_image_url }}"
+                            height="175"
+                            class="scaleX-n1-rtl"
+                            alt="{{ Auth::user()->first_name }}" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4 col-md-4 order-1">
+                  <div class="row">
+                    <div class="col-lg-6 col-md-12 col-6 mb-6">
+                      <div class="card h-100">
+                        <div class="card-body">
+                          <div class="card-title d-flex align-items-start justify-content-between mb-4">
+                            <div class="avatar flex-shrink-0">
+                              <img
+                                src="{{ asset('theme/assets/img/icons/unicons/chart-success.png')}}"
+                                alt="chart success"
+                                class="rounded" />
+                            </div>
+                            <div class="dropdown">
+                              <button
+                                class="btn p-0"
+                                type="button"
+                                id="cardOpt3"
+                                data-bs-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false">
+                                <i class="bx bx-dots-vertical-rounded text-muted"></i>
+                              </button>
+                              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
+                                <a class="dropdown-item" href="javascript:void(0);">Görüntüle</a>
+                                
+                              </div>
+                            </div>
+                          </div>
+                          <p class="mb-1">Mevcut Yıllık İzin</p>
+                          <h4 class="card-title mb-3">
+                          {{ \App\Models\AnnualLeave::where('user_id', auth()->id())->sum('total_leaves') - \App\Models\AnnualLeave::where('user_id', auth()->id())->sum('used_leaves') }}
+                          </h4>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-6 mb-6">
+                      <div class="card h-100">
+                        <div class="card-body">
+                          <div class="card-title d-flex align-items-start justify-content-between mb-4">
+                            <div class="avatar flex-shrink-0">
+                              <img
+                                src="{{ asset('theme/assets/img/icons/unicons/wallet-info.png')}}"
+                                alt="wallet info"
+                                class="rounded" />
+                            </div>
+                            <div class="dropdown">
+                              <button
+                                class="btn p-0"
+                                type="button"
+                                id="cardOpt6"
+                                data-bs-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false">
+                                <i class="bx bx-dots-vertical-rounded text-muted"></i>
+                              </button>
+                              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt6">
+                                <a class="dropdown-item" href="javascript:void(0);">Görüntüle</a>
+                              </div>
+                            </div>
+                          </div>
+                          <p class="mb-1">Kullanılan İzin Sayısı</p>
+                          <h4 class="card-title mb-3">
+                          {{ \App\Models\AnnualLeave::where('user_id', auth()->id())->sum('used_leaves') }}
+                          </h4>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+
+                <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-6">
+                  <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between">
+                      <div class="card-title mb-0">
+                        <h5 class="mb-1 me-2">Zimmetli Eşyalarım</h5>
+                      </div>
+                      <div class="dropdown">
+                        <button
+                          class="btn text-muted p-0"
+                          type="button"
+                          id="orederStatistics"
+                          data-bs-toggle="dropdown"
+                          aria-haspopup="true"
+                          aria-expanded="false">
+                          <i class="bx bx-dots-vertical-rounded bx-lg"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="orederStatistics">
+                          <a class="dropdown-item" href="javascript:void(0);">Görüntüle</a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between align-items-center mb-6">
+                        <!-- <div class="d-flex flex-column align-items-center gap-1">
+                          <h3 class="mb-1">4</h3>
+                          <small>Adet eşya</small>
+                        </div> -->
+                        <!-- <div id="orderStatisticsChart"></div> -->
+                      </div>
+                      <ul class="p-0 m-0">
+                        <li class="d-flex align-items-center mb-5">
+                          <div class="avatar flex-shrink-0 me-3">
+                            <span class="avatar-initial rounded bg-label-primary"
+                              ><i class="bx bx-laptop"></i
+                            ></span>
+                          </div>
+                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                            <div class="me-2">
+                              <h6 class="mb-0">Elektronik</h6>
+                              <small>Macbook M1 Air 2021</small>
+                            </div>
+                            <div class="user-progress">
+                              <h6 class="mb-0">15.08.2024</h6>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="d-flex align-items-center mb-5">
+                          <div class="avatar flex-shrink-0 me-3">
+                            <span class="avatar-initial rounded bg-label-success"><i class="bx bx-save"></i
+                            ></i></span>
+                          </div>
+                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                            <div class="me-2">
+                              <h6 class="mb-0">Disk</h6>
+                              <small>Sandisk Taşınabilir Harddisk</small>
+                            </div>
+                            <div class="user-progress">
+                              <h6 class="mb-0">12.08.2024</h6>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="d-flex align-items-center mb-5">
+                          <div class="avatar flex-shrink-0 me-3">
+                            <span class="avatar-initial rounded bg-label-primary"
+                              ><i class="bx bx-laptop"></i
+                            ></span>
+                          </div>
+                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                            <div class="me-2">
+                              <h6 class="mb-0">Elektronik</h6>
+                              <small>Macbook M1 Air 2021</small>
+                            </div>
+                            <div class="user-progress">
+                              <h6 class="mb-0">15.08.2024</h6>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="d-flex align-items-center mb-5">
+                          <div class="avatar flex-shrink-0 me-3">
+                            <span class="avatar-initial rounded bg-label-primary"
+                              ><i class="bx bx-laptop"></i
+                            ></span>
+                          </div>
+                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                            <div class="me-2">
+                              <h6 class="mb-0">Elektronik</h6>
+                              <small>Macbook M1 Air 2021</small>
+                            </div>
+                            <div class="user-progress">
+                              <h6 class="mb-0">15.08.2024</h6>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="d-flex align-items-center mb-5">
+                          <div class="avatar flex-shrink-0 me-3">
+                            <span class="avatar-initial rounded bg-label-primary"
+                              ><i class="bx bx-laptop"></i
+                            ></span>
+                          </div>
+                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                            <div class="me-2">
+                              <h6 class="mb-0">Elektronik</h6>
+                              <small>Macbook M1 Air 2021</small>
+                            </div>
+                            <div class="user-progress">
+                              <h6 class="mb-0">15.08.2024</h6>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <!--/ Order Statistics -->
+
+                <!-- Expense Overview -->
+                <div class="col-md-6 col-lg-4 order-1 mb-6">
+                    <div class="card h-100">
+                        <div class="card-header nav-align-top">
+                            <ul class="nav nav-pills" role="tablist">
+                                <li class="nav-item">
+                                    <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-tabs-line-card-income" aria-controls="navs-tabs-line-card-income" aria-selected="true">
+                                        İzinlerim
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content p-0">
+                                <div class="tab-pane fade show active" id="navs-tabs-line-card-income" role="tabpanel">
+                                    <div id="incomeChart"></div>
+                                    <div class="d-flex align-items-center justify-content-center mt-6 gap-3">
+                                        <div class="flex-shrink-0">
+                                            <div id="expensesOfWeek"></div>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">Aylık Kullanılan Kısa İzin</h6>
+                                            <small>Toplam: 3 Saat</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--/ Expense Overview -->
+
+                <!-- Transactions -->
+                <div class="col-md-6 col-lg-4 order-2 mb-6">
+                  <div class="card h-100">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                      <h5 class="card-title m-0 me-2">İzinli Kişiler</h5>
+                    </div>
+                    <div class="card-body pt-4">
+                      <ul class="p-0 m-0">
+                      @foreach($activeShortLeaves as $leave)
+                        <li class="d-flex align-items-center mb-6">
+                          <div class="avatar flex-shrink-0 me-3">
+                            <img src="{{ $leave->user->profile_image_url }}" alt="{{ $leave->user->first_name }} {{ $leave->user->last_name }}" class="rounded" />
+                          </div>
+                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                            <div class="me-2">
+                              <small class="d-block">{{ $leave->user->first_name }} {{ $leave->user->last_name }}</small>
+                              <h6 class="fw-normal mb-0">Günlük İzin</h6>
+                            </div>
+                            <div class="user-progress d-flex align-items-center gap-2">
+                              <span class="fw-normal mb-0">{{ \Carbon\Carbon::parse($leave->start_time)->translatedFormat('j F Y H:i') }} - {{ \Carbon\Carbon::parse($leave->end_time)->translatedFormat('H:i') }}</span>
+                              <span class="badge bg-success">Aktif</span>
+                            </div>
+                          </div>
+                        </li>
+                        @endforeach
+                        @foreach($activeAnnualLeaves as $leave)
+                        <li class="d-flex align-items-center mb-6">
+                          <div class="avatar flex-shrink-0 me-3">
+                            <img src="{{ $leave->user->profile_image_url }}" alt="{{ $leave->user->first_name }} {{ $leave->user->last_name }}" class="rounded" />
+                          </div>
+                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                            <div class="me-2">
+                              <small class="d-block">{{ $leave->user->first_name }} {{ $leave->user->last_name }}</small>
+                              <h6 class="fw-normal mb-0">Yıllık İzin</h6>
+                            </div>
+                            <div class="user-progress d-flex align-items-center gap-2">
+                              <span class="fw-normal mb-0">{{ \Carbon\Carbon::parse($leave->start_date)->translatedFormat('d F ') }} - {{ \Carbon\Carbon::parse($leave->end_date)->translatedFormat('d F ') }}</span>
+                              <span class="badge bg-success">Aktif</span>
+                            </div>
+                          </div>
+                        </li>
+                        @endforeach
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <!--/ Transactions -->
+              </div>
+            </div>
+            <!-- / Content -->
+
+            <!-- Footer -->
+            <footer class="content-footer footer bg-footer-theme">
+              <div class="container-xxl">
+                <div
+                  class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
+                  <div class="text-body">
+                    ©
+                    <script>
+                      document.write(new Date().getFullYear());
+                    </script>
+                    , developed by Can Cetin @ 
+                    <a href="https://arinadigital.com/" target="_blank" class="footer-link">Arina Digital</a>
+                  </div>
+                </div>
+              </div>
+            </footer>
+
+            <div class="content-backdrop fade"></div>
+          </div>
+        </div>
 @endsection
