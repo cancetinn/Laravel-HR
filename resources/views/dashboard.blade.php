@@ -56,7 +56,7 @@
                       <div class="dropdown-divider my-1"></div>
                     </li>
                     <li>
-                      <a class="dropdown-item" href="#">
+                      <a class="dropdown-item" href="">
                         <i class="bx bx-user bx-md me-3"></i><span>Profilim</span>
                       </a>
                     </li>
@@ -89,8 +89,8 @@
                         <div class="card-body">
                           <h5 class="card-title text-primary mb-6">Günaydın, {{ Auth::user()->first_name }}!</h5>
                           <h4 class="mb-6">
-                          <i class='bx bx-sun'></i> 24°C <small>/ İstanbul/Pendik</small>
-                          </>
+                            <i class='bx bx-sun'></i> {{ $temperature }}°C <small>/ {{ $location }}</small>
+                            </h4>
                         </div>
                       </div>
                       <div class="col-sm-5 text-center text-sm-left">

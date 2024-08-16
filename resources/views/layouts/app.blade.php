@@ -34,8 +34,15 @@
     <link rel="stylesheet" href="{{ asset('theme/assets/vendor/css/pages/page-auth.css')}}" />
     <script src="{{ asset('theme/assets/vendor/js/helpers.js')}}"></script>
     <script src="{{ asset('theme/assets/js/config.js')}}"></script>
+
+    <link rel="apple-touch-icon" type="https://arinadigital.com/wp-content/uploads/2023/12/favicon.png" href="icon.57.png">
+    <link rel="apple-touch-icon" type="https://arinadigital.com/wp-content/uploads/2023/12/favicon.png" sizes="72x72" href="icon.72.png">
+    <link rel="apple-touch-icon" type="https://arinadigital.com/wp-content/uploads/2023/12/favicon.png" sizes="114x114" href="icon.114.png">
+    <link rel="icon" type="https://arinadigital.com/wp-content/uploads/2023/12/favicon.png" href="icon.114.png">
+
   </head>
 
+  @if(auth()->check())
     <body>
       <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
@@ -53,6 +60,7 @@
       <!-- Overlay -->
       <div class="layout-overlay layout-menu-toggle"></div>
     </div>
+    @endif
 
     <script src="{{ asset('theme/assets/vendor/libs/jquery/jquery.js')}}"></script>
     <script src="{{ asset('theme/assets/vendor/libs/popper/popper.js')}}"></script>
