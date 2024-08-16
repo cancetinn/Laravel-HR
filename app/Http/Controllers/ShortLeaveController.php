@@ -30,11 +30,12 @@ class ShortLeaveController extends Controller
         ]);
 
         ShortLeave::create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'date' => $request->date,
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
-            'duration' => Carbon::parse($request->start_time)->diffInMinutes(Carbon::parse($request->end_time)),
+            'duration' => Carbon::parse($request->start_time)
+                ->diffInMinutes(Carbon::parse($request->end_time)),
             'reason' => $request->reason,
             'status' => 'pending',
         ]);
@@ -42,15 +43,9 @@ class ShortLeaveController extends Controller
         return redirect()->route('short_leaves.index')->with('success', 'Kısa izin talebiniz başarıyla oluşturuldu.');
     }
 
-/*     public function show(ShortLeave $shortLeave)
-    {
-        return view('short_leaves.show', compact('shortLeave'));
-    } */
-
     public function destroy(ShortLeave $shortLeave)
     {
         $shortLeave->delete();
         return redirect()->route('short_leaves.index')->with('success', 'İzin talebi başarıyla silindi.');
     }
 }
-

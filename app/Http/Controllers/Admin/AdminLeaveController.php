@@ -14,47 +14,28 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminLeaveController extends Controller
 {
-    /**
-     * @return \Illuminate\Contracts\View\View
-     */
     public function index()
     {
-        $currentUser = auth()->user();
-    
+        $currentUser = Auth::user();
+        $usersQuery = User::with(['annualLeaves' => function ($query) {
+            $query->where('year', now()->year);
+        }, 'leaveRequests' => function ($query) {
+            $query->orderBy('end_date', 'desc');
+        }]);
+
         if ($currentUser->role == 1) {
-            // Admin tüm kullanıcıları görür
-            $users = User::with(['annualLeaves' => function ($query) {
-                $query->where('year', now()->year);
-            }, 'leaveRequests' => function ($query) {
-                $query->orderBy('end_date', 'desc');
-            }])->get();
+            $users = $usersQuery->get();
         } elseif ($currentUser->role == 2) {
-            // Grafik Tasarım departmanındaki kullanıcılar sadece Grafik Tasarım departmanını görür
-            $users = User::where('department', 1)
-                ->with(['annualLeaves' => function ($query) {
-                    $query->where('year', now()->year);
-                }, 'leaveRequests' => function ($query) {
-                    $query->orderBy('end_date', 'desc');
-                }])->get();
+            $users = $usersQuery->where('department', 1)->get(); // Grafik Tasarım departmanı (1)
         } elseif ($currentUser->role == 3) {
-            // İçerik departmanındaki kullanıcılar sadece İçerik departmanını görür
-            $users = User::where('department', 3)
-                ->with(['annualLeaves' => function ($query) {
-                    $query->where('year', now()->year);
-                }, 'leaveRequests' => function ($query) {
-                    $query->orderBy('end_date', 'desc');
-                }])->get();
+            $users = $usersQuery->where('department', 3)->get(); // İçerik departmanı (3)
         } else {
             $users = collect();
         }
-    
-        return view('admin.leaves.index', compact('users'));
-    }                   
 
-    /**
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
+        return view('admin.leaves.index', compact('users'));
+    }
+
     public function requestLeave(Request $request)
     {
         $request->validate([
@@ -64,14 +45,12 @@ class AdminLeaveController extends Controller
 
         $user = Auth::user();
 
-        $pendingRequest = $user->leaveRequests()->where('status', 'pending')->exists();
-        if ($pendingRequest) {
+        if ($user->leaveRequests()->where('status', 'pending')->exists()) {
             return back()->with('error', 'Zaten bekleyen bir izin talebiniz var.');
         }
 
         $startDate = Carbon::parse($request->start_date);
         $endDate = Carbon::parse($request->end_date);
-
         $leaveDays = $this->calculateWeekdays($startDate, $endDate);
 
         $annualLeave = $user->annualLeaves()->where('year', now()->year)->first();
@@ -91,16 +70,12 @@ class AdminLeaveController extends Controller
         return back()->with('error', 'Yeterli izin gününüz yok.');
     }
 
-    /**
-     * @param \Illuminate\Http\Request $request
-     * @param int $requestId
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function updateLeaveRequest(Request $request, $requestId)
     {
         $leaveRequest = LeaveRequest::findOrFail($requestId);
+        $action = $request->input('action');
 
-        if ($request->input('action') === 'approve') {
+        if ($action === 'approve') {
             $leaveRequest->status = 'approved';
 
             $annualLeave = AnnualLeave::where('user_id', $leaveRequest->user_id)
@@ -109,15 +84,13 @@ class AdminLeaveController extends Controller
 
             if ($annualLeave) {
                 $leaveDays = $this->calculateWeekdays($leaveRequest->start_date, $leaveRequest->end_date);
-
                 $annualLeave->used_leaves += $leaveDays;
                 $annualLeave->save();
             }
 
             $leaveRequest->days_used = $leaveDays;
             $leaveRequest->save();
-
-        } elseif ($request->input('action') === 'reject') {
+        } elseif ($action === 'reject') {
             $leaveRequest->status = 'rejected';
             $leaveRequest->save();
         }
@@ -125,37 +98,24 @@ class AdminLeaveController extends Controller
         return back()->with('success', 'İzin talebi güncellendi.');
     }
 
-    /**
-     * @param int $userId
-     * @return \Illuminate\Contracts\View\View
-     */
     public function showUserLeaveHistory($userId)
     {
-        $currentUser = auth()->user();
-        $user = User::findOrFail($userId);
-    
-        if ($currentUser->role == 1 || ($currentUser->role == 2 && $user->department == 1) || ($currentUser->role == 3 && $user->department == 3)) {
-            // Admin ise veya departman aynı ise izin geçmişini göster
-            $user = User::with('leaveRequests')->findOrFail($userId);
-            return view('admin.leaves.history', compact('user'));
-        } else {
-            // Yetkisi yoksa 403 döndür
-            abort(403, 'Bu sayfaya erişim yetkiniz yok.');
-        }
-    }             
+        $currentUser = Auth::user();
+        $user = User::with('leaveRequests')->findOrFail($userId);
 
-    /**
-     * @param \Illuminate\Http\Request $request
-     * @param int $userId
-     * @return \Illuminate\Http\RedirectResponse
-     */
+        if ($currentUser->role == 1 || ($currentUser->role == 2 && $user->department == 1) || ($currentUser->role == 3 && $user->department == 3)) {
+            return view('admin.leaves.history', compact('user'));
+        }
+
+        abort(403, 'Bu sayfaya erişim yetkiniz yok.');
+    }
+
     public function updateAnnualLeave(Request $request, $userId)
     {
-        $currentUser = auth()->user();
+        $currentUser = Auth::user();
         $user = User::findOrFail($userId);
-    
+
         if ($currentUser->role == 1 || ($currentUser->role == 2 && $user->department == 1) || ($currentUser->role == 3 && $user->department == 3)) {
-            // Admin veya aynı departmandaki kullanıcı yıllık izni güncelleyebilir
             $annualLeave = $user->annualLeaves()->where('year', now()->year)->first();
     
             if ($annualLeave) {
@@ -171,7 +131,7 @@ class AdminLeaveController extends Controller
                     'updated_by' => $currentUser->first_name . ' ' . $currentUser->last_name,
                 ]);
             } else {
-                $annualLeave = AnnualLeave::create([
+                AnnualLeave::create([
                     'user_id' => $user->id,
                     'year' => now()->year,
                     'total_leaves' => $request->input('total_leaves'),
@@ -180,52 +140,36 @@ class AdminLeaveController extends Controller
             }
     
             return redirect()->route('admin.leaves.edit', $user->id)->with('success', 'Yıllık izin güncellendi.');
-        } else {
-            // Yetkisi olmayan kullanıcılar güncelleme yapamaz
-            abort(403, 'Bu işlemi gerçekleştirme yetkiniz yok.');
         }
-    }         
 
-    /**
-     * @param int $userId
-     * @return \Illuminate\Contracts\View\View
-     */
+        abort(403, 'Bu işlemi gerçekleştirme yetkiniz yok.');
+    }
+
     public function edit($userId)
     {
-        $currentUser = auth()->user();
-        $user = User::findOrFail($userId);
-    
+        $currentUser = Auth::user();
+        $user = User::with(['annualLeaves' => function ($query) {
+            $query->where('year', now()->year);
+        }])->findOrFail($userId);
+
         if ($currentUser->role == 1 || ($currentUser->role == 2 && $user->department == 1) || ($currentUser->role == 3 && $user->department == 3)) {
-            $annualLeave = $user->annualLeaves->where('year', now()->year)->first();
+            $annualLeave = $user->annualLeaves->first();
             $totalLeaves = $annualLeave ? $annualLeave->total_leaves : 0;
             $usedLeaves = $annualLeave ? $annualLeave->used_leaves : 0;
             $remainingLeaves = $totalLeaves - $usedLeaves;
-    
-            $logs = AnnualLeaveLog::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
-    
-            return view('admin.leaves.edit', compact('user', 'totalLeaves', 'usedLeaves', 'remainingLeaves', 'logs'));
-        } else {
-            // Yetkisi olmayan kullanıcılar düzenleme yapamaz
-            abort(403, 'Bu sayfaya erişim yetkiniz yok.');
-        }
-    }           
 
-    /**
-     * @param string $startDate
-     * @param string $endDate
-     * @return int
-     */
+            $logs = AnnualLeaveLog::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
+
+            return view('admin.leaves.edit', compact('user', 'totalLeaves', 'usedLeaves', 'remainingLeaves', 'logs'));
+        }
+
+        abort(403, 'Bu sayfaya erişim yetkiniz yok.');
+    }
+
     public function calculateWeekdays($startDate, $endDate)
     {
-        $period = CarbonPeriod::create($startDate, $endDate);
-        $weekdays = 0;
-
-        foreach ($period as $date) {
-            if (!$date->isWeekend()) {
-                $weekdays++;
-            }
-        }
-
-        return $weekdays;
+        return CarbonPeriod::create($startDate, $endDate)
+            ->filter(fn($date) => !$date->isWeekend())
+            ->count();
     }
 }

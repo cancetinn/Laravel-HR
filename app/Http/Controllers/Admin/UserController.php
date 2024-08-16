@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Document;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -35,20 +36,20 @@ class UserController extends Controller
             'department' => 'nullable|string|max:255',
             'joining_date' => 'nullable|date',
         ]);
-    
-        $user = new User($request->all());
-        $user->name = $request->first_name . ' ' . $request->last_name;
-    
+
+        $data = $request->except(['password', 'profile_image']);
+        $data['password'] = Hash::make($request->password);
+        $data['name'] = $request->first_name . ' ' . $request->last_name;
+
         if ($request->hasFile('profile_image')) {
-            $path = $request->file('profile_image')->store('profile_images', 'public');
-            $user->profile_image = $path;
+            $data['profile_image'] = $request->file('profile_image')->store('profile_images', 'public');
         }
-    
-        $user->save();
-    
+
+        User::create($data);
+
         return redirect()->route('admin.users.index')->with('success', 'Kullanıcı başarıyla oluşturuldu.');
     }
-    
+
     public function update(Request $request, User $user)
     {
         $request->validate([
@@ -64,31 +65,23 @@ class UserController extends Controller
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
-        $user->email = $request->email;
-        $user->role = $request->role;
-        $user->title = $request->title;
-        $user->phone = $request->phone;
-        $user->department = $request->department;
-        $user->joining_date = $request->joining_date;
+        $data = $request->except(['password', 'profile_image']);
 
         if ($request->filled('password')) {
-            $user->password = bcrypt($request->password);
+            $data['password'] = Hash::make($request->password);
         }
 
         if ($request->hasFile('profile_image')) {
             if ($user->profile_image) {
                 Storage::delete('public/' . $user->profile_image);
             }
-            $path = $request->file('profile_image')->store('profile_images', 'public');
-            $user->profile_image = $path;
+            $data['profile_image'] = $request->file('profile_image')->store('profile_images', 'public');
         }
 
-        $user->save();
+        $user->update($data);
 
         return redirect()->route('admin.users.index')->with('success', 'Kullanıcı başarıyla güncellendi.');
-    } 
+    }
 
     public function edit(User $user)
     {

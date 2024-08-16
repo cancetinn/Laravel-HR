@@ -7,6 +7,7 @@ use App\Models\Document;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class DocumentController extends Controller
 {
@@ -29,13 +30,13 @@ class DocumentController extends Controller
             'document_type' => 'required|string',
         ]);
 
-        $documentName = $request->file('document')->getClientOriginalName(); // Dosyanın orijinal adı
+        $documentName = $request->file('document')->getClientOriginalName();
         $documentPath = $request->file('document')->storeAs('documents', $documentName, 'public');
 
         Document::create([
             'user_id' => $userId,
-            'admin_id' => auth()->id(),
-            'document_name' => $documentName, // Orijinal dosya adını kaydediyoruz
+            'admin_id' => Auth::id(),
+            'document_name' => $documentName,
             'document_type' => $request->document_type,
             'uploaded_at' => now(),
         ]);
@@ -45,7 +46,7 @@ class DocumentController extends Controller
 
     public function downloadDocument(Document $document)
     {
-        $filePath = 'public/documents/' . $document->document_name;
+        $filePath = 'documents/' . $document->document_name;
 
         if (Storage::disk('public')->exists($filePath)) {
             return Storage::disk('public')->download($filePath);
@@ -53,7 +54,7 @@ class DocumentController extends Controller
 
         return redirect()->back()->with('error', 'Belge bulunamadı.');
     }
-    
+
     public function destroy(Document $document)
     {
         Storage::disk('public')->delete('documents/' . $document->document_name);
@@ -61,5 +62,4 @@ class DocumentController extends Controller
 
         return redirect()->back()->with('success', 'Belge başarıyla silindi.');
     }
-    
 }

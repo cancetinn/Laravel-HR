@@ -17,11 +17,13 @@ class LeaveController extends Controller
     public function showLeaveRequests()
     {
         $user = Auth::user();
+        $currentYear = now()->year;
+
         $leaveRequests = $user->leaveRequests()->get();
 
-        $annualLeave = $user->annualLeaves()->where('year', now()->year)->first();
-        $totalLeaves = $annualLeave ? $annualLeave->total_leaves : 0;
-        $usedLeaves = $annualLeave ? $annualLeave->used_leaves : 0;
+        $annualLeave = $user->annualLeaves()->where('year', $currentYear)->first();
+        $totalLeaves = $annualLeave->total_leaves ?? 0;
+        $usedLeaves = $annualLeave->used_leaves ?? 0;
         $remainingLeaves = $totalLeaves - $usedLeaves;
 
         $pendingRequest = $user->leaveRequests()->where('status', 'pending')->exists();
@@ -42,8 +44,7 @@ class LeaveController extends Controller
 
         $user = Auth::user();
 
-        $pendingRequest = $user->leaveRequests()->where('status', 'pending')->exists();
-        if ($pendingRequest) {
+        if ($user->leaveRequests()->where('status', 'pending')->exists()) {
             return back()->with('error', 'Zaten bekleyen bir izin talebiniz var.');
         }
 
@@ -86,8 +87,7 @@ class LeaveController extends Controller
                                       ->first();
 
             if ($annualLeave) {
-                $leaveDays = $this->calculateWeekdays($leaveRequest->start_date, $leaveRequest->end_date);
-
+                $leaveDays = $this->calculateWeekdays(Carbon::parse($leaveRequest->start_date), Carbon::parse($leaveRequest->end_date));
                 $annualLeave->used_leaves += $leaveDays;
                 $annualLeave->save();
             }
@@ -110,34 +110,25 @@ class LeaveController extends Controller
      */
     public function calculateWeekdays(Carbon $startDate, Carbon $endDate)
     {
-        $period = CarbonPeriod::create($startDate, $endDate);
-        $weekdays = 0;
-
-        foreach ($period as $date) {
-            if (!$date->isWeekend()) {
-                $weekdays++;
-            }
-        }
-
-        return $weekdays;
+        return CarbonPeriod::create($startDate, $endDate)
+            ->filter(fn($date) => !$date->isWeekend())
+            ->count();
     }
 
     public function cancelLeaveRequest($requestId)
     {
         $leaveRequest = LeaveRequest::findOrFail($requestId);
 
-        if ($leaveRequest->status === 'approved' || $leaveRequest->status === 'pending') {
+        if (in_array($leaveRequest->status, ['approved', 'pending'])) {
             $annualLeave = AnnualLeave::where('user_id', $leaveRequest->user_id)
-                                    ->where('year', now()->year)
-                                    ->first();
+                                      ->where('year', now()->year)
+                                      ->first();
 
             if ($annualLeave) {
-                // Kullanılan izin günlerini geri yükle
                 $annualLeave->used_leaves = max(0, $annualLeave->used_leaves - $leaveRequest->days_used);
                 $annualLeave->save();
             }
 
-            // İzin talebinin durumunu iptal olarak güncelle
             $leaveRequest->status = 'canceled';
             $leaveRequest->save();
 

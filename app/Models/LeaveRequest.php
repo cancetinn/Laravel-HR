@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
+use Illuminate\Support\Carbon;
 
 class LeaveRequest extends Model
 {
@@ -12,10 +12,12 @@ class LeaveRequest extends Model
 
     protected $fillable = [
         'user_id',
-        'start_date',
-        'end_date',
+        'date',
+        'start_time',
+        'end_time',
+        'reason',
+        'duration',
         'status',
-        'days_used',
     ];
 
     /**
@@ -26,20 +28,30 @@ class LeaveRequest extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return bool
+     */
     public function isActive()
     {
-        $currentDate = now()->toDateString();
-        return $currentDate >= $this->start_date && $currentDate <= $this->end_date;
+        return Carbon::now()->between($this->start_time, $this->end_time);
     }
 
+    /**
+     * @return bool
+     */
     public function isExpired()
     {
-        return now()->toDateString() > $this->end_date;
+        return Carbon::now()->greaterThan($this->end_time);
     }
 
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     public function scopeActive($query)
     {
-        return $query->where('start_date', '<=', now()->toDateString())
-                    ->where('end_date', '>=', now()->toDateString());
+        $now = Carbon::now();
+        return $query->where('date', $now->toDateString())
+                    ->where('end_time', '>', $now->toTimeString());
     }
 }

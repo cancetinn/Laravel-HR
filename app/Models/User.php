@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
-use App\Models\AnnualLeave;
 
 class User extends Authenticatable
 {
@@ -49,10 +48,9 @@ class User extends Authenticatable
      */
     public function getProfileImageUrlAttribute()
     {
-        if ($this->profile_image) {
-            return Storage::url($this->profile_image);
-        }
-        return asset('images/default-profile.png');
+        return $this->profile_image 
+            ? Storage::url($this->profile_image) 
+            : asset('images/default-profile.png');
     }
 
     /**
@@ -77,7 +75,7 @@ class User extends Authenticatable
      */
     public function permissions()
     {
-        return $this->roles->map->permissions->flatten()->pluck('name')->unique();
+        return $this->roles->flatMap->permissions->pluck('name')->unique();
     }
 
     /**
@@ -104,15 +102,26 @@ class User extends Authenticatable
     {
         return $this->hasMany(AnnualLeave::class);
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function documents()
     {
         return $this->hasMany(Document::class);
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function shortLeaves()
     {
         return $this->hasMany(ShortLeave::class);
     }
 
+    /**
+     * @return string
+     */
     public function getDepartmentNameAttribute()
     {
         $departments = [
