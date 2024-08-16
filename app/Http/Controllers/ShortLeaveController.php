@@ -6,6 +6,8 @@ use App\Models\ShortLeave;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\admin\AdminShortLeaveNotification;
 
 class ShortLeaveController extends Controller
 {
@@ -28,8 +30,8 @@ class ShortLeaveController extends Controller
             'end_time' => 'required|date_format:H:i|after:start_time',
             'reason' => 'required|string|max:255',
         ]);
-
-        ShortLeave::create([
+    
+        $shortLeave = ShortLeave::create([
             'user_id' => Auth::id(),
             'date' => $request->date,
             'start_time' => $request->start_time,
@@ -39,7 +41,11 @@ class ShortLeaveController extends Controller
             'reason' => $request->reason,
             'status' => 'pending',
         ]);
-
+    
+        // Yöneticiye e-posta gönderimi
+        $adminEmail = 'can.cetin@arinadigital.com'; // Yönetici e-posta adresi
+        Mail::to($adminEmail)->send(new AdminShortLeaveNotification($shortLeave));
+    
         return redirect()->route('short_leaves.index')->with('success', 'Kısa izin talebiniz başarıyla oluşturuldu.');
     }
 

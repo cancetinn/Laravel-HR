@@ -7,6 +7,9 @@ use App\Models\ShortLeave;
 use App\Models\ShortLeaveLog;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ShortLeaveRequestResponse;
+
 
 class AdminShortLeaveController extends Controller
 {
@@ -55,24 +58,26 @@ class AdminShortLeaveController extends Controller
     {
         $shortLeave = ShortLeave::findOrFail($id);
         $currentUser = auth()->user();
-
+    
         if ($currentUser->role == 1 ||
             ($currentUser->department == $shortLeave->user->department && in_array($currentUser->role, [2, 3]))) {
-
+    
             $action = $request->input('action');
             $shortLeave->status = $action === 'approve' ? 'approved' : 'rejected';
             $shortLeave->save();
-
+    
             ShortLeaveLog::create([
                 'short_leave_id' => $shortLeave->id,
                 'admin_id' => $currentUser->id,
                 'action' => $action,
                 'remarks' => $request->input('remarks'),
             ]);
-
-            return redirect()->route('admin.short_leaves.show', $shortLeave->user_id)->with('success', 'İzin talebi güncellendi.');
+    
+            Mail::to($shortLeave->user->email)->send(new ShortLeaveRequestResponse($shortLeave, $action));
+    
+            return redirect()->route('admin.short_leaves.show', $shortLeave->user_id)->with('success', 'Kısa izin talebi güncellendi.');
         }
-
+    
         abort(403, 'Bu işlemi gerçekleştirme yetkiniz yok.');
-    }
+    }    
 }
