@@ -26,7 +26,7 @@ class DashboardController extends Controller
 
         LeaveRequest::where('status', 'approved')
             ->where('end_date', '<', $now->toDateString())
-            ->update(['status' => 'expire']);
+            ->update(['status' => 'canceled']);
 
         $activeShortLeaves = ShortLeave::where('status', 'approved')->get();
         $activeAnnualLeaves = LeaveRequest::where('status', 'approved')->get();
