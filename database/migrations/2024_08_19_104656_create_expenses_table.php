@@ -15,8 +15,8 @@ class CreateExpensesTable extends Migration
             $table->text('description')->nullable();
             $table->string('attachment');
             $table->date('expense_date');
-            $table->enum('status', ['Pending', 'Approved', 'Rejected'])->default('Pending');
-            $table->enum('payment_status', ['Pending', 'Paid'])->default('Pending');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('Pending');
+            $table->enum('payment_status', ['pending', 'paid', 'unpaid'])->default('Pending');
             $table->timestamps();
         });
     }

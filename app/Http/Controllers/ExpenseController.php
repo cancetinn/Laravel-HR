@@ -40,7 +40,7 @@ class ExpenseController extends Controller
             'expense_date' => $request->expense_date,
         ]);
 
-        return redirect()->route('expenses.index')->with('success', 'Expense added successfully.');
+        return redirect()->route('expenses.index')->with('success', 'Masraf başarı ile eklendi!');
     }
 
     public function adminIndex()
@@ -58,16 +58,25 @@ class ExpenseController extends Controller
     public function updateStatus(Request $request, Expense $expense)
     {
         $request->validate([
-            'status' => 'required|in:Pending,Approved,Rejected',
-            'payment_status' => 'required|in:Pending,Paid',
+            'status' => 'required|in:approved,rejected,pending',
         ]);
 
-        $expense->update([
-            'status' => $request->status,
-            'payment_status' => $request->payment_status,
-        ]);
+        $expense->status = $request->input('status');
+        $expense->save();
 
-        return redirect()->back()->with('success', 'Expense updated successfully.');
+        return back()->with('success', 'Masraf durumu güncellendi.');
+    }
+
+    public function updatePaymentStatus(Request $request, Expense $expense)
+    {
+        $request->validate([
+            'payment_status' => 'required|in:paid,unpaid,pending',
+        ]);
+    
+        $expense->payment_status = $request->input('payment_status');
+        $expense->save();
+    
+        return back()->with('success', 'Ödeme durumu güncellendi.');
     }
 }
 

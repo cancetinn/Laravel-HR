@@ -1,64 +1,106 @@
-@extends('layouts.app')
-
-@section('content')
-<div class="container mx-auto px-4 sm:px-8">
-    <div class="py-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Belgelerim</h1>
-        <div class="bg-white shadow-lg rounded-lg p-6">
-            <table class="min-w-full bg-white text-gray-800 rounded-lg overflow-hidden">
-                <thead class="bg-gray-200">
-                    <tr>
-                        <th class="py-3 px-5 text-left text-sm font-semibold">Belge Adı</th>
-                        <th class="py-3 px-5 text-left text-sm font-semibold">Belge Türü</th>
-                        <th class="py-3 px-5 text-left text-sm font-semibold">Yüklenme Tarihi</th>
-                        <th class="py-3 px-5 text-left text-sm font-semibold">İşlemler</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($documents as $document)
-                    <tr class="border-b border-gray-200 hover:bg-gray-100 transition duration-200">
-                        <td class="py-4 px-5 text-sm">{{ $document->document_name }}</td>
-                        <td class="py-4 px-5 text-sm">{{ $document->document_type }}</td>
-                        <td class="py-4 px-5 text-sm">{{ \Carbon\Carbon::parse($document->uploaded_at)->format('d.m.Y') }}</td>
-                        <td class="py-4 px-5 text-sm flex space-x-2">
-                            <button onclick="openModal('{{ asset('storage/documents/' . $document->document_name) }}')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">Görüntüle</button>
-                            <a target="_blank" href="{{ asset('storage/documents/' . $document->document_name) }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-200">İndir</a>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+@extends('layouts.app') @section('content')
+<div class="layout-page">
+    <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
+        <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0 d-xl-none">
+            <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)">
+                <i class="bx bx-menu bx-md"></i>
+            </a>
         </div>
-    </div>
-</div>
 
-<!-- Modal -->
-<div id="documentModal" class="fixed z-50 inset-0 overflow-y-auto hidden">
-    <div class="flex items-center justify-center min-h-screen">
-        <div class="fixed inset-0 bg-gray-800 bg-opacity-50 transition-opacity" aria-hidden="true"></div>
-        <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
-            <div class="p-6">
-                <h2 class="text-lg font-semibold text-gray-800 mb-4">Belge Görüntüleyici</h2>
-                <div class="relative">
-                    <embed id="documentViewer" src="" type="application/pdf" class="w-full h-96 border border-gray-300 rounded-md" />
+        <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+            <div class="navbar-nav align-items-center">
+                <div class="nav-item d-flex align-items-center">
+                    <i class="bx bx-search bx-md"></i>
+                    <input type="text" class="form-control border-0 shadow-none ps-1 ps-sm-2" placeholder="Arama" aria-label="Arama" />
                 </div>
-                <div class="mt-4 flex justify-end">
-                    <button type="button" onclick="closeModal()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-200">Kapat</button>
+            </div>
+
+            <ul class="navbar-nav flex-row align-items-center ms-auto">
+
+                <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                    <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
+                        <div class="avatar avatar-online">
+                            <img src="{{ Auth::user()->profile_image_url }}" alt class="w-px-40 h-auto rounded-circle" />
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="avatar avatar-online">
+                                            <img src="{{ Auth::user()->profile_image_url }}" alt class="w-px-40 h-auto rounded-circle" />
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</h6>
+                                        <small class="text-muted">{{ Auth::user()->title }}</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <div class="dropdown-divider my-1"></div>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('profile.show') }}">
+                                <i class="bx bx-user bx-md me-3"></i><span>Profilim</span>
+                            </a>
+                        </li>
+                        <li>
+                            <div class="dropdown-divider my-1"></div>
+                        </li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                                this.closest('form').submit();">
+                                    <i class="bx bx-power-off bx-md me-3"></i><span>Çıkış Yap</span>
+                                </a>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+
+    <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1 container-p-y">
+            <div class="heading d-flex justify-content-between">
+                <div class="titleArea">
+                    <h3>Belgelerim</h3>
+                </div>
+            </div>
+            <div class="card">
+                <div class="table-responsive text-nowrap">
+                    
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Belge Adı</th>
+                                <th>Belge Türü</th>
+                                <th>Yüklenme Tarihi</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($documents as $document)
+                            <tr class="border-b border-gray-200 hover:bg-gray-100 transition duration-200">
+                                <td class="py-4 px-5 text-sm">{{ $document->document_name }}</td>
+                                <td class="py-4 px-5 text-sm">{{ $document->document_type }}</td>
+                                <td class="py-4 px-5 text-sm">
+                                    <a href="{{ asset('storage/documents/' . $document->document_name) }}" target="_blank">Görüntüle</a>
+                                </td>
+                                <td class="py-4 px-5 text-sm">{{ $document->document_type }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<script>
-    function openModal(documentUrl) {
-        document.getElementById('documentViewer').src = documentUrl;
-        document.getElementById('documentModal').classList.remove('hidden');
-    }
-
-    function closeModal() {
-        document.getElementById('documentViewer').src = '';
-        document.getElementById('documentModal').classList.add('hidden');
-    }
-</script>
 @endsection

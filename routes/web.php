@@ -92,6 +92,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Masraflar Admin
     Route::get('expenses', [ExpenseController::class, 'adminIndex'])->name('expenses.index');
     Route::get('expenses/review/{userId}', [ExpenseController::class, 'reviewUserExpenses'])->name('expenses.review');
+    Route::post('/expenses/{expense}/update-status', [ExpenseController::class, 'updateStatus'])->name('expenses.updateStatus');
+    Route::post('/expenses/{expense}/update-payment-status', [ExpenseController::class, 'updatePaymentStatus'])->name('expenses.updatePaymentStatus');
 });
 
 // Authentication rotalarını dahil et

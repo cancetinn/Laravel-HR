@@ -56,7 +56,7 @@
                       <div class="dropdown-divider my-1"></div>
                     </li>
                     <li>
-                      <a class="dropdown-item" href="">
+                      <a class="dropdown-item" href="{{ route('profile.show') }}">
                         <i class="bx bx-user bx-md me-3"></i><span>Profilim</span>
                       </a>
                     </li>
@@ -322,9 +322,7 @@
                         </div>
                     </div>
                 </div>
-                <!--/ Expense Overview -->
 
-                <!-- Transactions -->
                 <div class="col-md-6 col-lg-4 order-2 mb-6">
                   <div class="card h-100">
                     <div class="card-header d-flex align-items-center justify-content-between">
@@ -370,12 +368,9 @@
                     </div>
                   </div>
                 </div>
-                <!--/ Transactions -->
               </div>
             </div>
-            <!-- / Content -->
 
-            <!-- Footer -->
             <footer class="content-footer footer bg-footer-theme">
               <div class="container-xxl">
                 <div
@@ -384,8 +379,7 @@
                     ©
                     <script>
                       document.write(new Date().getFullYear());
-                    </script>
-                    , developed by Can Cetin @ 
+                    </script>, developed by Can Cetin @ 
                     <a href="https://arinadigital.com/" target="_blank" class="footer-link">Arina Digital</a>
                   </div>
                 </div>
