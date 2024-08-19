@@ -6,7 +6,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShortLeaveController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\Admin\AdminLeaveController;
 use App\Http\Controllers\Admin\AdminShortLeaveController;
 use App\Exports\UsersLeaveExport;
@@ -36,6 +38,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('short-leaves/create', [ShortLeaveController::class, 'create'])->name('short_leaves.create');
     Route::post('short-leaves', [ShortLeaveController::class, 'store'])->name('short_leaves.store');
     Route::delete('short-leaves/{shortLeave}', [ShortLeaveController::class, 'destroy'])->name('short_leaves.destroy');
+
+    //Masraflar
+    Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
+    Route::get('/expenses/create', [ExpenseController::class, 'create'])->name('expenses.create');
+    Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
+
+    //PROFİL
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 // Admin rotaları, sadece 'role' alanı 1 olan kullanıcılar erişebilir
@@ -76,6 +88,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('short-leaves', [AdminShortLeaveController::class, 'index'])->name('short_leaves.index');
     Route::get('short-leaves/{user}', [AdminShortLeaveController::class, 'show'])->name('short_leaves.show');
     Route::post('short-leaves/{id}', [AdminShortLeaveController::class, 'update'])->name('short_leaves.update');
+
+    // Masraflar Admin
+    Route::get('expenses', [ExpenseController::class, 'adminIndex'])->name('expenses.index');
+    Route::get('expenses/review/{userId}', [ExpenseController::class, 'reviewUserExpenses'])->name('expenses.review');
 });
 
 // Authentication rotalarını dahil et

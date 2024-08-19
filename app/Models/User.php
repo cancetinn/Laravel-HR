@@ -133,4 +133,9 @@ class User extends Authenticatable
 
         return $departments[$this->department] ?? 'Bilinmiyor';
     }
+
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class);
+    }
 }
